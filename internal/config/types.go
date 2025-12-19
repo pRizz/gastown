@@ -52,6 +52,23 @@ type RigConfig struct {
 	Type       string            `json:"type"`                  // "rig"
 	Version    int               `json:"version"`               // schema version
 	MergeQueue *MergeQueueConfig `json:"merge_queue,omitempty"` // merge queue settings
+	Theme      *ThemeConfig      `json:"theme,omitempty"`       // tmux theme settings
+}
+
+// ThemeConfig represents tmux theme settings for a rig.
+type ThemeConfig struct {
+	// Name picks from the default palette (e.g., "ocean", "forest").
+	// If empty, a theme is auto-assigned based on rig name.
+	Name string `json:"name,omitempty"`
+
+	// Custom overrides the palette with specific colors.
+	Custom *CustomTheme `json:"custom,omitempty"`
+}
+
+// CustomTheme allows specifying exact colors for the status bar.
+type CustomTheme struct {
+	BG string `json:"bg"` // Background color (hex or tmux color name)
+	FG string `json:"fg"` // Foreground color (hex or tmux color name)
 }
 
 // MergeQueueConfig represents merge queue settings for a rig.

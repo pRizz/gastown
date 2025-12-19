@@ -171,6 +171,10 @@ func (m *Manager) Start(foreground bool) error {
 	_ = t.SetEnvironment(sessionID, "GT_RIG", m.rig.Name)
 	_ = t.SetEnvironment(sessionID, "GT_REFINERY", "1")
 
+	// Apply theme (same as rig polecats)
+	theme := tmux.AssignTheme(m.rig.Name)
+	_ = t.ConfigureGasTownSession(sessionID, theme, m.rig.Name, "refinery", "refinery")
+
 	// Send the command to start refinery in foreground mode
 	// The foreground mode handles state updates and the processing loop
 	command := fmt.Sprintf("gt refinery start %s --foreground", m.rig.Name)

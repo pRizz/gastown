@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"strings"
 	"time"
+
+	"github.com/steveyegge/gastown/internal/tmux"
 )
 
 // BeadsMessage represents a message from beads mail.
@@ -177,13 +179,14 @@ func (d *Daemon) identityToSession(identity string) string {
 func (d *Daemon) restartSession(sessionName, identity string) error {
 	// Determine working directory and startup command based on agent type
 	var workDir, startCmd string
+	var rigName string
 
 	if identity == "mayor" {
 		workDir = d.config.TownRoot
 		startCmd = "exec claude --dangerously-skip-permissions"
 	} else if strings.HasSuffix(identity, "-witness") {
 		// Extract rig name: <rig>-witness → <rig>
-		rigName := strings.TrimSuffix(identity, "-witness")
+		rigName = strings.TrimSuffix(identity, "-witness")
 		workDir = d.config.TownRoot + "/" + rigName
 		startCmd = "exec claude --dangerously-skip-permissions"
 	} else {
@@ -197,6 +200,15 @@ func (d *Daemon) restartSession(sessionName, identity string) error {
 
 	// Set environment
 	_ = d.tmux.SetEnvironment(sessionName, "GT_ROLE", identity)
+
+	// Apply theme
+	if identity == "mayor" {
+		theme := tmux.MayorTheme()
+		_ = d.tmux.ConfigureGasTownSession(sessionName, theme, "", "Mayor", "coordinator")
+	} else if rigName != "" {
+		theme := tmux.AssignTheme(rigName)
+		_ = d.tmux.ConfigureGasTownSession(sessionName, theme, rigName, "witness", "witness")
+	}
 
 	// Send startup command
 	if err := d.tmux.SendKeys(sessionName, startCmd); err != nil {

@@ -269,3 +269,62 @@ func (t *Tmux) GetSessionInfo(name string) (*SessionInfo, error) {
 		Attached: parts[3] == "1",
 	}, nil
 }
+
+// ApplyTheme sets the status bar style for a session.
+func (t *Tmux) ApplyTheme(session string, theme Theme) error {
+	_, err := t.run("set-option", "-t", session, "status-style", theme.Style())
+	return err
+}
+
+// SetStatusFormat configures the left side of the status bar.
+// Shows: [rig/worker] role
+func (t *Tmux) SetStatusFormat(session, rig, worker, role string) error {
+	// Format: [gastown/Rictus] polecat
+	var left string
+	if rig == "" {
+		// Mayor or other top-level agent
+		left = fmt.Sprintf("[%s] %s ", worker, role)
+	} else {
+		left = fmt.Sprintf("[%s/%s] %s ", rig, worker, role)
+	}
+
+	// Allow enough room for the identity
+	if _, err := t.run("set-option", "-t", session, "status-left-length", "40"); err != nil {
+		return err
+	}
+	_, err := t.run("set-option", "-t", session, "status-left", left)
+	return err
+}
+
+// SetDynamicStatus configures the right side with dynamic content.
+// Uses a shell command that tmux calls periodically to get current status.
+func (t *Tmux) SetDynamicStatus(session string) error {
+	// tmux calls this command every status-interval seconds
+	// gt status-line reads env vars and mail to build the status
+	right := fmt.Sprintf(`#(gt status-line --session=%s 2>/dev/null) %%H:%%M`, session)
+
+	if _, err := t.run("set-option", "-t", session, "status-right-length", "50"); err != nil {
+		return err
+	}
+	// Set faster refresh for more responsive status
+	if _, err := t.run("set-option", "-t", session, "status-interval", "5"); err != nil {
+		return err
+	}
+	_, err := t.run("set-option", "-t", session, "status-right", right)
+	return err
+}
+
+// ConfigureGasTownSession applies full Gas Town theming to a session.
+// This is a convenience method that applies theme, status format, and dynamic status.
+func (t *Tmux) ConfigureGasTownSession(session string, theme Theme, rig, worker, role string) error {
+	if err := t.ApplyTheme(session, theme); err != nil {
+		return fmt.Errorf("applying theme: %w", err)
+	}
+	if err := t.SetStatusFormat(session, rig, worker, role); err != nil {
+		return fmt.Errorf("setting status format: %w", err)
+	}
+	if err := t.SetDynamicStatus(session); err != nil {
+		return fmt.Errorf("setting dynamic status: %w", err)
+	}
+	return nil
+}

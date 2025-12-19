@@ -504,6 +504,10 @@ func runCrewAt(cmd *cobra.Command, args []string) error {
 		_ = t.SetEnvironment(sessionID, "GT_RIG", r.Name)
 		_ = t.SetEnvironment(sessionID, "GT_CREW", name)
 
+		// Apply theme
+		theme := tmux.AssignTheme(r.Name)
+		_ = t.ConfigureGasTownSession(sessionID, theme, r.Name, name, "crew")
+
 		// Start claude with skip permissions (crew workers are trusted like Mayor)
 		// Use SendKeysDelayed to allow shell initialization after NewSession
 		if err := t.SendKeysDelayed(sessionID, "claude --dangerously-skip-permissions", 200); err != nil {
@@ -726,6 +730,10 @@ func runCrewRefresh(cmd *cobra.Command, args []string) error {
 	_ = t.SetEnvironment(sessionID, "GT_RIG", r.Name)
 	_ = t.SetEnvironment(sessionID, "GT_CREW", name)
 
+	// Apply theme
+	theme := tmux.AssignTheme(r.Name)
+	_ = t.ConfigureGasTownSession(sessionID, theme, r.Name, name, "crew")
+
 	// Start claude
 	// Use SendKeysDelayed to allow shell initialization after NewSession
 	if err := t.SendKeysDelayed(sessionID, "claude", 200); err != nil {
@@ -775,6 +783,10 @@ func runCrewRestart(cmd *cobra.Command, args []string) error {
 	// Set environment
 	t.SetEnvironment(sessionID, "GT_RIG", r.Name)
 	t.SetEnvironment(sessionID, "GT_CREW", name)
+
+	// Apply theme
+	theme := tmux.AssignTheme(r.Name)
+	_ = t.ConfigureGasTownSession(sessionID, theme, r.Name, name, "crew")
 
 	// Start claude with skip permissions (crew workers are trusted)
 	// Use SendKeysDelayed to allow shell initialization after NewSession

@@ -266,6 +266,10 @@ func runWitnessAttach(cmd *cobra.Command, args []string) error {
 		t.SetEnvironment(sessionName, "GT_ROLE", "witness")
 		t.SetEnvironment(sessionName, "GT_RIG", rigName)
 
+		// Apply theme (same as rig polecats)
+		theme := tmux.AssignTheme(rigName)
+		_ = t.ConfigureGasTownSession(sessionName, theme, rigName, "witness", "witness")
+
 		// Launch Claude in a respawn loop
 		loopCmd := `while true; do echo "👁️ Starting Witness for ` + rigName + `..."; claude --dangerously-skip-permissions; echo ""; echo "Witness exited. Restarting in 2s... (Ctrl-C to stop)"; sleep 2; done`
 		if err := t.SendKeysDelayed(sessionName, loopCmd, 200); err != nil {

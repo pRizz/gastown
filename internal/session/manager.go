@@ -132,6 +132,10 @@ func (m *Manager) Start(polecat string, opts StartOptions) error {
 	_ = m.tmux.SetEnvironment(sessionID, "BEADS_NO_DAEMON", "1")
 	_ = m.tmux.SetEnvironment(sessionID, "BEADS_AGENT_NAME", fmt.Sprintf("%s/%s", m.rig.Name, polecat))
 
+	// Apply theme
+	theme := tmux.AssignTheme(m.rig.Name)
+	_ = m.tmux.ConfigureGasTownSession(sessionID, theme, m.rig.Name, polecat, "polecat")
+
 	// Send initial command
 	command := opts.Command
 	if command == "" {

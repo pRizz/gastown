@@ -122,6 +122,10 @@ func startMayorSession(t *tmux.Tmux) error {
 	// Set environment
 	_ = t.SetEnvironment(MayorSessionName, "GT_ROLE", "mayor")
 
+	// Apply Mayor theme
+	theme := tmux.MayorTheme()
+	_ = t.ConfigureGasTownSession(MayorSessionName, theme, "", "Mayor", "coordinator")
+
 	// Launch Claude in a respawn loop - session survives restarts
 	// The startup hook handles 'gt prime' automatically
 	// Use SendKeysDelayed to allow shell initialization after NewSession
