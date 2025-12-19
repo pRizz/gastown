@@ -11,6 +11,7 @@ import (
 
 	"github.com/steveyegge/gastown/internal/git"
 	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/templates"
 )
 
 // Common errors
@@ -124,8 +125,43 @@ func (m *Manager) Add(name string, createBranch bool) (*CrewWorker, error) {
 }
 
 // createClaudeMD creates the CLAUDE.md file for crew worker prompting.
+// Uses the crew template from internal/templates for comprehensive context.
 func (m *Manager) createClaudeMD(name, crewPath string) error {
+	// Try to use templates for comprehensive crew context
+	tmpl, err := templates.New()
+	if err != nil {
+		// Fall back to minimal content if templates fail
+		return m.createClaudeMDFallback(name, crewPath)
+	}
+
+	// Find town root by walking up from rig path
+	townRoot := filepath.Dir(m.rig.Path)
+
+	// Build template data
+	data := templates.RoleData{
+		Role:     "crew",
+		RigName:  m.rig.Name,
+		TownRoot: townRoot,
+		WorkDir:  crewPath,
+		Polecat:  name, // Used for crew member name
+	}
+
+	// Render the crew template
+	content, err := tmpl.RenderRole("crew", data)
+	if err != nil {
+		// Fall back if rendering fails
+		return m.createClaudeMDFallback(name, crewPath)
+	}
+
+	claudePath := filepath.Join(crewPath, "CLAUDE.md")
+	return os.WriteFile(claudePath, []byte(content), 0644)
+}
+
+// createClaudeMDFallback creates a minimal CLAUDE.md if templates fail.
+func (m *Manager) createClaudeMDFallback(name, crewPath string) error {
 	content := fmt.Sprintf(`# Claude: Crew Worker - %s
+
+Run `+"`gt prime`"+` for full crew worker context.
 
 You are a **crew worker** in the %s rig. Crew workers are user-managed persistent workspaces.
 
@@ -133,43 +169,19 @@ You are a **crew worker** in the %s rig. Crew workers are user-managed persisten
 
 - **User-managed**: You are NOT managed by the Witness daemon
 - **Persistent**: Your workspace is not automatically cleaned up
-- **Optional issue assignment**: You can work without a beads issue
+- **Long-lived identity**: You keep your name across sessions
 - **Mail enabled**: You can send and receive mail
 
-## Commands
+## Key Commands
 
-Check mail:
-`+"```bash"+`
-town mail inbox --as %s/%s
-`+"```"+`
+- `+"`gt prime`"+` - Output full crew worker context
+- `+"`gt mail inbox`"+` - Check your inbox
+- `+"`bd ready`"+` - Available issues (if beads configured)
+- `+"`bd show <id>`"+` - View issue details
+- `+"`bd close <id>`"+` - Mark issue complete
 
-Send mail:
-`+"```bash"+`
-town mail send <recipient> -s "Subject" -m "Message" --as %s/%s
-`+"```"+`
-
-## Session Cycling (Handoff)
-
-When your context fills up, use mail-to-self for handoff:
-
-1. Compose a handoff note with current state
-2. Send to yourself: `+"```"+`town mail send %s/%s -s "Handoff" -m "..."--as %s/%s`+"```"+`
-3. Exit cleanly
-4. New session reads handoff from inbox
-
-## Beads
-
-If using beads for task tracking:
-`+"```bash"+`
-bd ready           # Find available work
-bd show <id>       # Review issue details
-bd update <id> --status=in_progress  # Claim it
-bd close <id>      # Mark complete
-`+"```"+`
-`, name, m.rig.Name,
-		m.rig.Name, name,
-		m.rig.Name, name,
-		m.rig.Name, name, m.rig.Name, name)
+Crew: %s | Rig: %s
+`, name, m.rig.Name, name, m.rig.Name)
 
 	claudePath := filepath.Join(crewPath, "CLAUDE.md")
 	return os.WriteFile(claudePath, []byte(content), 0644)
