@@ -551,6 +551,90 @@ Thank you for your contribution!`,
 	router.Send(msg)
 }
 
+// ErrMRNotFound is returned when a merge request is not found.
+var ErrMRNotFound = errors.New("merge request not found")
+
+// ErrMRNotFailed is returned when trying to retry an MR that hasn't failed.
+var ErrMRNotFailed = errors.New("merge request has not failed")
+
+// GetMR returns a merge request by ID.
+func (m *Manager) GetMR(id string) (*MergeRequest, error) {
+	ref, err := m.loadState()
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if it's the current MR
+	if ref.CurrentMR != nil && ref.CurrentMR.ID == id {
+		return ref.CurrentMR, nil
+	}
+
+	// Check pending MRs
+	if ref.PendingMRs != nil {
+		if mr, ok := ref.PendingMRs[id]; ok {
+			return mr, nil
+		}
+	}
+
+	return nil, ErrMRNotFound
+}
+
+// Retry resets a failed merge request so it can be processed again.
+// If processNow is true, immediately processes the MR instead of waiting for the loop.
+func (m *Manager) Retry(id string, processNow bool) error {
+	ref, err := m.loadState()
+	if err != nil {
+		return err
+	}
+
+	// Find the MR
+	var mr *MergeRequest
+	if ref.PendingMRs != nil {
+		mr = ref.PendingMRs[id]
+	}
+	if mr == nil {
+		return ErrMRNotFound
+	}
+
+	// Verify it's in a failed state (open with an error)
+	if mr.Status != MROpen || mr.Error == "" {
+		return ErrMRNotFailed
+	}
+
+	// Clear the error to mark as ready for retry
+	mr.Error = ""
+
+	// Save the state
+	if err := m.saveState(ref); err != nil {
+		return err
+	}
+
+	// If --now flag, process immediately
+	if processNow {
+		result := m.ProcessMR(mr)
+		if !result.Success {
+			return fmt.Errorf("retry failed: %s", result.Error)
+		}
+	}
+
+	return nil
+}
+
+// RegisterMR adds a merge request to the pending queue.
+func (m *Manager) RegisterMR(mr *MergeRequest) error {
+	ref, err := m.loadState()
+	if err != nil {
+		return err
+	}
+
+	if ref.PendingMRs == nil {
+		ref.PendingMRs = make(map[string]*MergeRequest)
+	}
+
+	ref.PendingMRs[mr.ID] = mr
+	return m.saveState(ref)
+}
+
 // findTownRoot walks up directories to find the town root.
 func findTownRoot(startPath string) string {
 	path := startPath

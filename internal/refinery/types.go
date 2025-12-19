@@ -38,6 +38,10 @@ type Refinery struct {
 	// CurrentMR is the merge request currently being processed.
 	CurrentMR *MergeRequest `json:"current_mr,omitempty"`
 
+	// PendingMRs tracks merge requests that have been submitted.
+	// Key is the MR ID.
+	PendingMRs map[string]*MergeRequest `json:"pending_mrs,omitempty"`
+
 	// LastMergeAt is when the last successful merge happened.
 	LastMergeAt *time.Time `json:"last_merge_at,omitempty"`
 
