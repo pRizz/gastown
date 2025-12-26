@@ -270,13 +270,13 @@ Morning:
 
 ```bash
 # Attach a work mol to current session wisp
-bd mol attach <mol-id>
+gt mol attach <pinned-bead-id> <mol-id>
 
 # Check current attachment
 gt mol status
 
 # Detach (human override)
-bd mol detach
+gt mol detach <pinned-bead-id>
 ```
 
 ---
