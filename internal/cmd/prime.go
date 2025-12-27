@@ -880,8 +880,8 @@ func outputDeaconPatrolContext(ctx RoleContext) {
 			return
 		}
 
-		// Create the patrol wisp
-		cmdSpawn := exec.Command("bd", "--no-daemon", "wisp", protoID, "--assignee", "deacon")
+		// Create the patrol wisp (step 1: create)
+		cmdSpawn := exec.Command("bd", "--no-daemon", "wisp", "create", protoID)
 		cmdSpawn.Dir = rigBeadsDir
 		var stdoutSpawn, stderrSpawn bytes.Buffer
 		cmdSpawn.Stdout = &stdoutSpawn
@@ -889,20 +889,19 @@ func outputDeaconPatrolContext(ctx RoleContext) {
 
 		if err := cmdSpawn.Run(); err != nil {
 			fmt.Printf("Failed to create patrol wisp: %s\n", stderrSpawn.String())
-			fmt.Println(style.Dim.Render("Run manually: bd --no-daemon wisp" + protoID))
+			fmt.Println(style.Dim.Render("Run manually: bd --no-daemon wisp create " + protoID))
 			return
 		}
 
 		// Parse the created molecule ID from output
 		spawnOutput := stdoutSpawn.String()
-		fmt.Printf("✓ Created patrol wisp\n")
 
-		// Extract molecule ID from output (format: "Created molecule: gt-xxxx")
+		// Extract molecule ID from output (format: "Root issue: wisp-xxxx" or "gt-xxxx")
 		for _, line := range strings.Split(spawnOutput, "\n") {
-			if strings.Contains(line, "molecule:") || strings.Contains(line, "Created") {
+			if strings.Contains(line, "Root issue:") || strings.Contains(line, "Created") {
 				parts := strings.Fields(line)
 				for _, p := range parts {
-					if strings.HasPrefix(p, "gt-") {
+					if strings.HasPrefix(p, "wisp-") || strings.HasPrefix(p, "gt-") {
 						patrolID = p
 						break
 					}
@@ -910,8 +909,18 @@ func outputDeaconPatrolContext(ctx RoleContext) {
 			}
 		}
 
-		if patrolID != "" {
-			fmt.Printf("Patrol ID: %s\n\n", patrolID)
+		if patrolID == "" {
+			fmt.Printf("⚠ Created wisp but could not parse ID from output\n")
+			return
+		}
+
+		// Pin the wisp to deacon (step 2: assign)
+		cmdPin := exec.Command("bd", "--no-daemon", "update", patrolID, "--status=pinned", "--assignee=deacon")
+		cmdPin.Dir = rigBeadsDir
+		if err := cmdPin.Run(); err != nil {
+			fmt.Printf("⚠ Created wisp %s but failed to pin to deacon\n", patrolID)
+		} else {
+			fmt.Printf("✓ Created and pinned patrol wisp: %s\n", patrolID)
 		}
 	} else {
 		// Has active patrol - show status
@@ -1046,8 +1055,9 @@ func outputWitnessPatrolContext(ctx RoleContext) {
 			return
 		}
 
-		// Create the patrol wisp
-		cmdSpawn := exec.Command("bd", "--no-daemon", "wisp", protoID, "--assignee", ctx.Rig+"/witness")
+		// Create the patrol wisp (step 1: create)
+		witnessAgent := ctx.Rig + "/witness"
+		cmdSpawn := exec.Command("bd", "--no-daemon", "wisp", "create", protoID)
 		cmdSpawn.Dir = witnessBeadsDir
 		var stdoutSpawn, stderrSpawn bytes.Buffer
 		cmdSpawn.Stdout = &stdoutSpawn
@@ -1055,20 +1065,19 @@ func outputWitnessPatrolContext(ctx RoleContext) {
 
 		if err := cmdSpawn.Run(); err != nil {
 			fmt.Printf("Failed to create patrol wisp: %s\n", stderrSpawn.String())
-			fmt.Println(style.Dim.Render("Run manually: bd --no-daemon wisp" + protoID))
+			fmt.Println(style.Dim.Render("Run manually: bd --no-daemon wisp create " + protoID))
 			return
 		}
 
 		// Parse the created molecule ID from output
 		spawnOutput := stdoutSpawn.String()
-		fmt.Printf("✓ Created patrol wisp\n")
 
-		// Extract molecule ID from output (format: "Created molecule: gt-xxxx")
+		// Extract molecule ID from output (format: "Root issue: wisp-xxxx" or "gt-xxxx")
 		for _, line := range strings.Split(spawnOutput, "\n") {
-			if strings.Contains(line, "molecule:") || strings.Contains(line, "Created") {
+			if strings.Contains(line, "Root issue:") || strings.Contains(line, "Created") {
 				parts := strings.Fields(line)
 				for _, p := range parts {
-					if strings.HasPrefix(p, "gt-") {
+					if strings.HasPrefix(p, "wisp-") || strings.HasPrefix(p, "gt-") {
 						patrolID = p
 						break
 					}
@@ -1076,8 +1085,18 @@ func outputWitnessPatrolContext(ctx RoleContext) {
 			}
 		}
 
-		if patrolID != "" {
-			fmt.Printf("Patrol ID: %s\n\n", patrolID)
+		if patrolID == "" {
+			fmt.Printf("⚠ Created wisp but could not parse ID from output\n")
+			return
+		}
+
+		// Pin the wisp to witness (step 2: assign)
+		cmdPin := exec.Command("bd", "--no-daemon", "update", patrolID, "--status=pinned", "--assignee="+witnessAgent)
+		cmdPin.Dir = witnessBeadsDir
+		if err := cmdPin.Run(); err != nil {
+			fmt.Printf("⚠ Created wisp %s but failed to pin to witness\n", patrolID)
+		} else {
+			fmt.Printf("✓ Created and pinned patrol wisp: %s\n", patrolID)
 		}
 	} else {
 		// Has active patrol - show status
@@ -1212,8 +1231,9 @@ func outputRefineryPatrolContext(ctx RoleContext) {
 			return
 		}
 
-		// Create the patrol wisp
-		cmdSpawn := exec.Command("bd", "--no-daemon", "wisp", protoID, "--assignee", ctx.Rig+"/refinery")
+		// Create the patrol wisp (step 1: create)
+		refineryAgent := ctx.Rig + "/refinery"
+		cmdSpawn := exec.Command("bd", "--no-daemon", "wisp", "create", protoID)
 		cmdSpawn.Dir = refineryBeadsDir
 		var stdoutSpawn, stderrSpawn bytes.Buffer
 		cmdSpawn.Stdout = &stdoutSpawn
@@ -1221,20 +1241,19 @@ func outputRefineryPatrolContext(ctx RoleContext) {
 
 		if err := cmdSpawn.Run(); err != nil {
 			fmt.Printf("Failed to create patrol wisp: %s\n", stderrSpawn.String())
-			fmt.Println(style.Dim.Render("Run manually: bd --no-daemon wisp" + protoID))
+			fmt.Println(style.Dim.Render("Run manually: bd --no-daemon wisp create " + protoID))
 			return
 		}
 
 		// Parse the created molecule ID from output
 		spawnOutput := stdoutSpawn.String()
-		fmt.Printf("✓ Created patrol wisp\n")
 
-		// Extract molecule ID from output (format: "Created molecule: gt-xxxx")
+		// Extract molecule ID from output (format: "Root issue: wisp-xxxx" or "gt-xxxx")
 		for _, line := range strings.Split(spawnOutput, "\n") {
-			if strings.Contains(line, "molecule:") || strings.Contains(line, "Created") {
+			if strings.Contains(line, "Root issue:") || strings.Contains(line, "Created") {
 				parts := strings.Fields(line)
 				for _, p := range parts {
-					if strings.HasPrefix(p, "gt-") {
+					if strings.HasPrefix(p, "wisp-") || strings.HasPrefix(p, "gt-") {
 						patrolID = p
 						break
 					}
@@ -1242,8 +1261,18 @@ func outputRefineryPatrolContext(ctx RoleContext) {
 			}
 		}
 
-		if patrolID != "" {
-			fmt.Printf("Patrol ID: %s\n\n", patrolID)
+		if patrolID == "" {
+			fmt.Printf("⚠ Created wisp but could not parse ID from output\n")
+			return
+		}
+
+		// Pin the wisp to refinery (step 2: assign)
+		cmdPin := exec.Command("bd", "--no-daemon", "update", patrolID, "--status=pinned", "--assignee="+refineryAgent)
+		cmdPin.Dir = refineryBeadsDir
+		if err := cmdPin.Run(); err != nil {
+			fmt.Printf("⚠ Created wisp %s but failed to pin to refinery\n", patrolID)
+		} else {
+			fmt.Printf("✓ Created and pinned patrol wisp: %s\n", patrolID)
 		}
 	} else {
 		// Has active patrol - show status
