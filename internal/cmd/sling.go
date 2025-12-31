@@ -940,6 +940,7 @@ func DispatchToDog(dogName string, create bool) (*DogDispatchInfo, error) {
 	mgr := dog.NewManager(townRoot, rigsConfig)
 
 	var targetDog *dog.Dog
+	var spawned bool
 
 	if dogName != "" {
 		// Specific dog requested
@@ -952,6 +953,7 @@ func DispatchToDog(dogName string, create bool) (*DogDispatchInfo, error) {
 					return nil, fmt.Errorf("creating dog %s: %w", dogName, err)
 				}
 				fmt.Printf("✓ Created dog %s\n", dogName)
+				spawned = true
 			} else {
 				return nil, fmt.Errorf("dog %s not found (use --create to add)", dogName)
 			}
@@ -972,6 +974,7 @@ func DispatchToDog(dogName string, create bool) (*DogDispatchInfo, error) {
 					return nil, fmt.Errorf("creating dog %s: %w", newName, err)
 				}
 				fmt.Printf("✓ Created dog %s (pool was empty)\n", newName)
+				spawned = true
 			} else {
 				return nil, fmt.Errorf("no idle dogs available (use --create to add)")
 			}
@@ -999,7 +1002,7 @@ func DispatchToDog(dogName string, create bool) (*DogDispatchInfo, error) {
 		DogName:  targetDog.Name,
 		AgentID:  agentID,
 		Pane:     pane,
-		Spawned:  false, // TODO: track if we spawned a new session
+		Spawned:  spawned,
 	}, nil
 }
 
