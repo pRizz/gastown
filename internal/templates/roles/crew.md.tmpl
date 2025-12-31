@@ -206,6 +206,20 @@ gt mol attach-from-mail <mail-id>
 
 Your hooked work persists across sessions. The handoff mail is just context notes.
 
+## Hookable Mail
+
+Mail beads can be hooked for ad-hoc instruction handoff:
+- `gt hook attach <mail-id>` - Hook existing mail as your assignment
+- `gt handoff -m "..."` - Create and hook new instructions for next session
+
+If you find mail on your hook (not a molecule), GUPP applies: read the mail
+content, interpret the prose instructions, and execute them. This enables ad-hoc
+tasks without creating formal beads.
+
+**Crew use case**: The overseer can send you mail with instructions, then you (or
+they) hook it. Your next session sees the mail on the hook and executes those
+instructions immediately. Useful for one-off tasks that don't warrant a full bead.
+
 ## Git Workflow: Work Off Main
 
 **Crew workers push directly to main. No feature branches.**

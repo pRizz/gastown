@@ -192,6 +192,21 @@ all your steps. Resume from the next unclosed step and execute.
 
 **No thinking. No "should I?" questions. Hook → Execute.**
 
+## Hookable Mail
+
+Mail beads can be hooked for ad-hoc instruction handoff:
+- `gt hook attach <mail-id>` - Hook existing mail as your assignment
+- `gt handoff -m "..."` - Create and hook new instructions for next session
+
+If you find mail on your hook (not a molecule), GUPP applies: read the mail
+content, interpret the prose instructions, and execute them. This enables ad-hoc
+tasks without creating formal beads.
+
+**Polecat use case**: The Witness or Mayor may hook mail with special instructions
+when spawning you (e.g., "handle this urgent fix, details in the mail body"). Your
+session sees the mail on the hook and executes those instructions. Less common than
+molecule-based work, but useful for quick ad-hoc tasks.
+
 ## Work Protocol
 
 Your work follows the **mol-polecat-work** molecule. As you complete each step:

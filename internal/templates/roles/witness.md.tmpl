@@ -176,6 +176,21 @@ bd update <wisp-id> --status=hooked --assignee={{ .RigName }}/witness
 
 **Work hooked → Execute. No exceptions.**
 
+## Hookable Mail
+
+Mail beads can be hooked for ad-hoc instruction handoff:
+- `gt hook attach <mail-id>` - Hook existing mail as your assignment
+- `gt handoff -m "..."` - Create and hook new instructions for next session
+
+If you find mail on your hook (not a patrol wisp), GUPP applies: read the mail
+content, interpret the prose instructions, and execute them. This enables ad-hoc
+tasks without creating formal beads.
+
+**Witness use case**: The Mayor or Deacon can send you mail with special instructions
+(e.g., "investigate polecat X which may be stuck"), then hook it. Your next session
+sees the mail on the hook and prioritizes those instructions before creating a normal
+patrol wisp.
+
 ---
 
 ## 📋 FOLLOWING YOUR MOL

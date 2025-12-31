@@ -312,6 +312,10 @@ func outputMayorContext(ctx RoleContext) {
 	fmt.Println("- `gt rigs` - List all rigs")
 	fmt.Println("- `bd ready` - Issues ready to work")
 	fmt.Println()
+	fmt.Println("## Hookable Mail")
+	fmt.Println("Mail can be hooked for ad-hoc instructions: `gt hook attach <mail-id>`")
+	fmt.Println("If mail is on your hook, read and execute its instructions (GUPP applies).")
+	fmt.Println()
 	fmt.Println("## Startup")
 	fmt.Println("Check for handoff messages with 🤝 HANDOFF in subject - continue predecessor's work.")
 	fmt.Println()
@@ -330,6 +334,10 @@ func outputWitnessContext(ctx RoleContext) {
 	fmt.Println("- `gt witness status` - Show witness status")
 	fmt.Println("- `gt polecats` - List polecats in this rig")
 	fmt.Println()
+	fmt.Println("## Hookable Mail")
+	fmt.Println("Mail can be hooked for ad-hoc instructions: `gt hook attach <mail-id>`")
+	fmt.Println("If mail is on your hook, read and execute its instructions (GUPP applies).")
+	fmt.Println()
 	fmt.Printf("Rig: %s\n", style.Dim.Render(ctx.Rig))
 }
 
@@ -345,6 +353,10 @@ func outputRefineryContext(ctx RoleContext) {
 	fmt.Println("## Key Commands")
 	fmt.Println("- `gt merge queue` - Show pending merges")
 	fmt.Println("- `gt merge next` - Process next merge")
+	fmt.Println()
+	fmt.Println("## Hookable Mail")
+	fmt.Println("Mail can be hooked for ad-hoc instructions: `gt hook attach <mail-id>`")
+	fmt.Println("If mail is on your hook, read and execute its instructions (GUPP applies).")
 	fmt.Println()
 	fmt.Printf("Rig: %s\n", style.Dim.Render(ctx.Rig))
 }
@@ -365,6 +377,10 @@ func outputPolecatContext(ctx RoleContext) {
 	fmt.Println("- `bd close <issue>` - Mark issue complete")
 	fmt.Println("- `gt done` - Signal work ready for merge")
 	fmt.Println()
+	fmt.Println("## Hookable Mail")
+	fmt.Println("Mail can be hooked for ad-hoc instructions: `gt hook attach <mail-id>`")
+	fmt.Println("If mail is on your hook, read and execute its instructions (GUPP applies).")
+	fmt.Println()
 	fmt.Printf("Polecat: %s | Rig: %s\n",
 		style.Dim.Render(ctx.Polecat), style.Dim.Render(ctx.Rig))
 }
@@ -383,6 +399,10 @@ func outputCrewContext(ctx RoleContext) {
 	fmt.Println("- `bd ready` - Available issues")
 	fmt.Println("- `bd show <issue>` - View issue details")
 	fmt.Println("- `bd close <issue>` - Mark issue complete")
+	fmt.Println()
+	fmt.Println("## Hookable Mail")
+	fmt.Println("Mail can be hooked for ad-hoc instructions: `gt hook attach <mail-id>`")
+	fmt.Println("If mail is on your hook, read and execute its instructions (GUPP applies).")
 	fmt.Println()
 	fmt.Printf("Crew: %s | Rig: %s\n",
 		style.Dim.Render(ctx.Polecat), style.Dim.Render(ctx.Rig))
