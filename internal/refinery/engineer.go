@@ -346,6 +346,8 @@ func (e *Engineer) runTests(ctx context.Context) ProcessResult {
 			fmt.Fprintf(e.output, "[Engineer] Retrying tests (attempt %d/%d)...\n", attempt, maxRetries)
 		}
 
+		// Note: TestCommand comes from rig's config.json (trusted infrastructure config),
+		// not from PR branches. Shell execution is intentional for flexibility (pipes, etc).
 		cmd := exec.CommandContext(ctx, "sh", "-c", e.config.TestCommand)
 		cmd.Dir = e.workDir
 		var stdout, stderr bytes.Buffer

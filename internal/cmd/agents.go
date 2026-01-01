@@ -64,7 +64,7 @@ var agentsCmd = &cobra.Command{
 	Long: `Display a popup menu of core Gas Town agent sessions.
 
 Shows Mayor, Deacon, Witnesses, Refineries, and Crew workers.
-Polecats are hidden (use 'gt polecats' to see them).
+Polecats are hidden (use 'gt polecat list' to see them).
 
 The menu appears as a tmux popup for quick session switching.`,
 	RunE: runAgents,

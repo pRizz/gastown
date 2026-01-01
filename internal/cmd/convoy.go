@@ -577,8 +577,10 @@ func getTrackedIssues(townBeads, convoyID string) []trackedIssueInfo {
 	dbPath := filepath.Join(townBeads, "beads.db")
 
 	// Query tracked dependencies from SQLite
+	// Escape single quotes to prevent SQL injection
+	safeConvoyID := strings.ReplaceAll(convoyID, "'", "''")
 	queryCmd := exec.Command("sqlite3", "-json", dbPath,
-		fmt.Sprintf(`SELECT depends_on_id, type FROM dependencies WHERE issue_id = '%s' AND type = 'tracks'`, convoyID))
+		fmt.Sprintf(`SELECT depends_on_id, type FROM dependencies WHERE issue_id = '%s' AND type = 'tracks'`, safeConvoyID))
 
 	var stdout bytes.Buffer
 	queryCmd.Stdout = &stdout

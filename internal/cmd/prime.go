@@ -332,7 +332,7 @@ func outputWitnessContext(ctx RoleContext) {
 	fmt.Println()
 	fmt.Println("## Key Commands")
 	fmt.Println("- `gt witness status` - Show witness status")
-	fmt.Println("- `gt polecats` - List polecats in this rig")
+	fmt.Println("- `gt polecat list` - List polecats in this rig")
 	fmt.Println()
 	fmt.Println("## Hookable Mail")
 	fmt.Println("Mail can be hooked for ad-hoc instructions: `gt hook attach <mail-id>`")
