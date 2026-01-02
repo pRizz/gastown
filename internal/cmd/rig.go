@@ -114,6 +114,27 @@ Examples:
 	RunE: runRigBoot,
 }
 
+var rigStartCmd = &cobra.Command{
+	Use:   "start <rig>...",
+	Short: "Start witness and refinery on patrol for one or more rigs",
+	Long: `Start the witness and refinery agents on patrol for one or more rigs.
+
+This is similar to 'gt rig boot' but supports multiple rigs at once.
+For each rig, it starts:
+- The witness (if not already running)
+- The refinery (if not already running)
+
+Polecats are NOT started by this command - they are spawned
+on demand when work is assigned.
+
+Examples:
+  gt rig start gastown
+  gt rig start gastown beads
+  gt rig start gastown beads myproject`,
+	Args: cobra.MinimumNArgs(1),
+	RunE: runRigStart,
+}
+
 var rigRebootCmd = &cobra.Command{
 	Use:   "reboot <rig>",
 	Short: "Restart witness and refinery for a rig",
@@ -195,6 +216,7 @@ func init() {
 	rigCmd.AddCommand(rigRemoveCmd)
 	rigCmd.AddCommand(rigResetCmd)
 	rigCmd.AddCommand(rigShutdownCmd)
+	rigCmd.AddCommand(rigStartCmd)
 	rigCmd.AddCommand(rigStatusCmd)
 
 	rigAddCmd.Flags().StringVar(&rigAddPrefix, "prefix", "", "Beads issue prefix (default: derived from name)")
@@ -661,6 +683,103 @@ func runRigBoot(cmd *cobra.Command, args []string) error {
 	}
 	if len(skipped) > 0 {
 		fmt.Printf("%s Skipped: %s\n", style.Dim.Render("•"), strings.Join(skipped, ", "))
+	}
+
+	return nil
+}
+
+func runRigStart(cmd *cobra.Command, args []string) error {
+	// Find workspace once
+	townRoot, err := workspace.FindFromCwdOrError()
+	if err != nil {
+		return fmt.Errorf("not in a Gas Town workspace: %w", err)
+	}
+
+	// Load rigs config
+	rigsPath := filepath.Join(townRoot, "mayor", "rigs.json")
+	rigsConfig, err := config.LoadRigsConfig(rigsPath)
+	if err != nil {
+		rigsConfig = &config.RigsConfig{Rigs: make(map[string]config.RigEntry)}
+	}
+
+	g := git.NewGit(townRoot)
+	rigMgr := rig.NewManager(townRoot, rigsConfig, g)
+	t := tmux.NewTmux()
+
+	var successRigs []string
+	var failedRigs []string
+
+	for _, rigName := range args {
+		r, err := rigMgr.GetRig(rigName)
+		if err != nil {
+			fmt.Printf("%s Rig '%s' not found\n", style.Warning.Render("⚠"), rigName)
+			failedRigs = append(failedRigs, rigName)
+			continue
+		}
+
+		fmt.Printf("Starting rig %s...\n", style.Bold.Render(rigName))
+
+		var started []string
+		var skipped []string
+		hasError := false
+
+		// 1. Start the witness
+		witnessSession := fmt.Sprintf("gt-%s-witness", rigName)
+		witnessRunning, _ := t.HasSession(witnessSession)
+		if witnessRunning {
+			skipped = append(skipped, "witness")
+		} else {
+			fmt.Printf("  Starting witness...\n")
+			created, err := ensureWitnessSession(rigName, r)
+			if err != nil {
+				fmt.Printf("  %s Failed to start witness: %v\n", style.Warning.Render("⚠"), err)
+				hasError = true
+			} else if created {
+				witMgr := witness.NewManager(r)
+				_ = witMgr.Start()
+				started = append(started, "witness")
+			}
+		}
+
+		// 2. Start the refinery
+		refinerySession := fmt.Sprintf("gt-%s-refinery", rigName)
+		refineryRunning, _ := t.HasSession(refinerySession)
+		if refineryRunning {
+			skipped = append(skipped, "refinery")
+		} else {
+			fmt.Printf("  Starting refinery...\n")
+			refMgr := refinery.NewManager(r)
+			if err := refMgr.Start(false); err != nil {
+				fmt.Printf("  %s Failed to start refinery: %v\n", style.Warning.Render("⚠"), err)
+				hasError = true
+			} else {
+				started = append(started, "refinery")
+			}
+		}
+
+		// Report results for this rig
+		if len(started) > 0 {
+			fmt.Printf("  %s Started: %s\n", style.Success.Render("✓"), strings.Join(started, ", "))
+		}
+		if len(skipped) > 0 {
+			fmt.Printf("  %s Skipped: %s (already running)\n", style.Dim.Render("•"), strings.Join(skipped, ", "))
+		}
+
+		if hasError {
+			failedRigs = append(failedRigs, rigName)
+		} else {
+			successRigs = append(successRigs, rigName)
+		}
+		fmt.Println()
+	}
+
+	// Summary
+	if len(successRigs) > 0 {
+		fmt.Printf("%s Started rigs: %s\n", style.Success.Render("✓"), strings.Join(successRigs, ", "))
+	}
+	if len(failedRigs) > 0 {
+		fmt.Printf("%s Failed rigs: %s\n", style.Warning.Render("⚠"), strings.Join(failedRigs, ", "))
+		return fmt.Errorf("some rigs failed to start")
 	}
 
 	return nil
