@@ -1,10 +1,8 @@
 package witness
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -12,9 +10,9 @@ import (
 	"github.com/steveyegge/gastown/internal/beads"
 	"github.com/steveyegge/gastown/internal/git"
 	"github.com/steveyegge/gastown/internal/mail"
-	"github.com/steveyegge/gastown/internal/polecat"
 	"github.com/steveyegge/gastown/internal/rig"
 	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/util"
 	"github.com/steveyegge/gastown/internal/workspace"
 )
 
@@ -243,7 +241,7 @@ func HandleMerged(workDir, rigName string, msg *mail.Message) *HandlerResult {
 	cleanupStatus := getCleanupStatus(workDir, rigName, payload.PolecatName)
 
 	switch cleanupStatus {
-	case polecat.CleanupClean:
+	case "clean":
 		// Safe to nuke - polecat has confirmed clean state
 		// Execute the nuke immediately
 		if err := NukePolecat(workDir, rigName, payload.PolecatName); err != nil {
@@ -257,21 +255,21 @@ func HandleMerged(workDir, rigName string, msg *mail.Message) *HandlerResult {
 			result.Action = fmt.Sprintf("auto-nuked %s (cleanup_status=clean, wisp=%s)", payload.PolecatName, wispID)
 		}
 
-	case polecat.CleanupUncommitted:
+	case "has_uncommitted":
 		// Has uncommitted changes - might be WIP, escalate to Mayor
 		result.Handled = true
 		result.WispCreated = wispID
 		result.Error = fmt.Errorf("polecat %s has uncommitted changes - escalate to Mayor before nuke", payload.PolecatName)
 		result.Action = fmt.Sprintf("BLOCKED: %s has uncommitted work, needs escalation", payload.PolecatName)
 
-	case polecat.CleanupStash:
+	case "has_stash":
 		// Has stashed work - definitely needs review
 		result.Handled = true
 		result.WispCreated = wispID
 		result.Error = fmt.Errorf("polecat %s has stashed work - escalate to Mayor before nuke", payload.PolecatName)
 		result.Action = fmt.Sprintf("BLOCKED: %s has stashed work, needs escalation", payload.PolecatName)
 
-	case polecat.CleanupUnpushed:
+	case "has_unpushed":
 		// Critical: has unpushed commits that could be lost
 		result.Handled = true
 		result.WispCreated = wispID
@@ -338,28 +336,17 @@ func createCleanupWisp(workDir, polecatName, issueID, branch string) (string, er
 
 	labels := strings.Join(CleanupWispLabels(polecatName, "pending"), ",")
 
-	cmd := exec.Command("bd", "create", //nolint:gosec // G204: args are constructed internally
+	output, err := util.ExecWithOutput(workDir, "bd", "create",
 		"--wisp",
 		"--title", title,
 		"--description", description,
 		"--labels", labels,
 	)
-	cmd.Dir = workDir
-
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		errMsg := strings.TrimSpace(stderr.String())
-		if errMsg != "" {
-			return "", fmt.Errorf("%s", errMsg)
-		}
+	if err != nil {
 		return "", err
 	}
 
 	// Extract wisp ID from output (bd create outputs "Created: <id>")
-	output := strings.TrimSpace(stdout.String())
 	if strings.HasPrefix(output, "Created:") {
 		return strings.TrimSpace(strings.TrimPrefix(output, "Created:")), nil
 	}
@@ -383,27 +370,16 @@ func createSwarmWisp(workDir string, payload *SwarmStartPayload) (string, error)
 
 	labels := strings.Join(SwarmWispLabels(payload.SwarmID, payload.Total, 0, payload.StartedAt), ",")
 
-	cmd := exec.Command("bd", "create", //nolint:gosec // G204: args are constructed internally
+	output, err := util.ExecWithOutput(workDir, "bd", "create",
 		"--wisp",
 		"--title", title,
 		"--description", description,
 		"--labels", labels,
 	)
-	cmd.Dir = workDir
-
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		errMsg := strings.TrimSpace(stderr.String())
-		if errMsg != "" {
-			return "", fmt.Errorf("%s", errMsg)
-		}
+	if err != nil {
 		return "", err
 	}
 
-	output := strings.TrimSpace(stdout.String())
 	if strings.HasPrefix(output, "Created:") {
 		return strings.TrimSpace(strings.TrimPrefix(output, "Created:")), nil
 	}
@@ -413,32 +389,21 @@ func createSwarmWisp(workDir string, payload *SwarmStartPayload) (string, error)
 
 // findCleanupWisp finds an existing cleanup wisp for a polecat.
 func findCleanupWisp(workDir, polecatName string) (string, error) {
-	cmd := exec.Command("bd", "list", //nolint:gosec // G204: bd is a trusted internal tool
+	output, err := util.ExecWithOutput(workDir, "bd", "list",
 		"--wisp",
 		"--labels", fmt.Sprintf("polecat:%s,state:merge-requested", polecatName),
 		"--status", "open",
 		"--json",
 	)
-	cmd.Dir = workDir
-
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
+	if err != nil {
 		// Empty result is fine
-		if strings.Contains(stderr.String(), "no issues found") {
+		if strings.Contains(err.Error(), "no issues found") {
 			return "", nil
-		}
-		errMsg := strings.TrimSpace(stderr.String())
-		if errMsg != "" {
-			return "", fmt.Errorf("%s", errMsg)
 		}
 		return "", err
 	}
 
 	// Parse JSON to get the wisp ID
-	output := strings.TrimSpace(stdout.String())
 	if output == "" || output == "[]" || output == "null" {
 		return "", nil
 	}
@@ -462,12 +427,12 @@ type agentBeadResponse struct {
 }
 
 // getCleanupStatus retrieves the cleanup_status from a polecat's agent bead.
-// Returns the typed CleanupStatus (clean, has_uncommitted, has_stash, has_unpushed).
-// Returns CleanupUnknown if agent bead doesn't exist or has no cleanup_status.
+// Returns the status string: "clean", "has_uncommitted", "has_stash", "has_unpushed"
+// Returns empty string if agent bead doesn't exist or has no cleanup_status.
 //
 // ZFC #10: This enables the Witness to verify it's safe to nuke before proceeding.
 // The polecat self-reports its git state when running `gt done`, and we trust that report.
-func getCleanupStatus(workDir, rigName, polecatName string) polecat.CleanupStatus {
+func getCleanupStatus(workDir, rigName, polecatName string) string {
 	// Construct agent bead ID using the rig's configured prefix
 	// This supports non-gt prefixes like "bd-" for the beads rig
 	townRoot, err := workspace.Find(workDir)
@@ -478,27 +443,20 @@ func getCleanupStatus(workDir, rigName, polecatName string) polecat.CleanupStatu
 	prefix := beads.GetPrefixForRig(townRoot, rigName)
 	agentBeadID := beads.PolecatBeadIDWithPrefix(prefix, rigName, polecatName)
 
-	cmd := exec.Command("bd", "show", agentBeadID, "--json") //nolint:gosec // G204: agentBeadID is validated internally
-	cmd.Dir = workDir
-
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		// Agent bead doesn't exist or bd failed - return unknown status
-		return polecat.CleanupUnknown
+	output, err := util.ExecWithOutput(workDir, "bd", "show", agentBeadID, "--json")
+	if err != nil {
+		// Agent bead doesn't exist or bd failed - return empty (unknown status)
+		return ""
 	}
 
-	output := stdout.Bytes()
-	if len(output) == 0 {
-		return polecat.CleanupUnknown
+	if output == "" {
+		return ""
 	}
 
 	// Parse the JSON response
 	var resp agentBeadResponse
-	if err := json.Unmarshal(output, &resp); err != nil {
-		return polecat.CleanupUnknown
+	if err := json.Unmarshal([]byte(output), &resp); err != nil {
+		return ""
 	}
 
 	// Parse cleanup_status from description
@@ -509,12 +467,12 @@ func getCleanupStatus(workDir, rigName, polecatName string) polecat.CleanupStatu
 			value := strings.TrimSpace(strings.TrimPrefix(line, "cleanup_status:"))
 			value = strings.TrimSpace(strings.TrimPrefix(value, "Cleanup_status:"))
 			if value != "" && value != "null" {
-				return polecat.CleanupStatus(value)
+				return value
 			}
 		}
 	}
 
-	return polecat.CleanupUnknown
+	return ""
 }
 
 // escalateToMayor sends an escalation mail to the Mayor.
@@ -600,18 +558,12 @@ DO NOT nuke without --force after recovery.`,
 // UpdateCleanupWispState updates a cleanup wisp's state label.
 func UpdateCleanupWispState(workDir, wispID, newState string) error {
 	// Get current labels to preserve other labels
-	cmd := exec.Command("bd", "show", wispID, "--json")
-	cmd.Dir = workDir
-
-	var stdout bytes.Buffer
-	cmd.Stdout = &stdout
-
-	if err := cmd.Run(); err != nil {
+	output, err := util.ExecWithOutput(workDir, "bd", "show", wispID, "--json")
+	if err != nil {
 		return fmt.Errorf("getting wisp: %w", err)
 	}
 
 	// Extract polecat name from existing labels for the update
-	output := stdout.String()
 	var polecatName string
 	if idx := strings.Index(output, `polecat:`); idx >= 0 {
 		rest := output[idx+8:]
@@ -627,21 +579,7 @@ func UpdateCleanupWispState(workDir, wispID, newState string) error {
 	// Update with new state
 	newLabels := strings.Join(CleanupWispLabels(polecatName, newState), ",")
 
-	updateCmd := exec.Command("bd", "update", wispID, "--labels", newLabels) //nolint:gosec // G204: args are constructed internally
-	updateCmd.Dir = workDir
-
-	var stderr bytes.Buffer
-	updateCmd.Stderr = &stderr
-
-	if err := updateCmd.Run(); err != nil {
-		errMsg := strings.TrimSpace(stderr.String())
-		if errMsg != "" {
-			return fmt.Errorf("%s", errMsg)
-		}
-		return err
-	}
-
-	return nil
+	return util.ExecRun(workDir, "bd", "update", wispID, "--labels", newLabels)
 }
 
 // NukePolecat executes the actual nuke operation for a polecat.
@@ -672,17 +610,7 @@ func NukePolecat(workDir, rigName, polecatName string) error {
 	// Now run gt polecat nuke to clean up worktree, branch, and beads
 	address := fmt.Sprintf("%s/%s", rigName, polecatName)
 
-	cmd := exec.Command("gt", "polecat", "nuke", address) //nolint:gosec // G204: address is constructed from validated internal data
-	cmd.Dir = workDir
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		errMsg := strings.TrimSpace(stderr.String())
-		if errMsg != "" {
-			return fmt.Errorf("nuke failed: %s", errMsg)
-		}
+	if err := util.ExecRun(workDir, "gt", "polecat", "nuke", address); err != nil {
 		return fmt.Errorf("nuke failed: %w", err)
 	}
 
@@ -707,7 +635,7 @@ func AutoNukeIfClean(workDir, rigName, polecatName string) *NukePolecatResult {
 	cleanupStatus := getCleanupStatus(workDir, rigName, polecatName)
 
 	switch cleanupStatus {
-	case polecat.CleanupClean:
+	case "clean":
 		// Safe to nuke
 		if err := NukePolecat(workDir, rigName, polecatName); err != nil {
 			result.Error = err
@@ -717,10 +645,10 @@ func AutoNukeIfClean(workDir, rigName, polecatName string) *NukePolecatResult {
 			result.Reason = "auto-nuked (cleanup_status=clean, no MR)"
 		}
 
-	case polecat.CleanupUncommitted, polecat.CleanupStash, polecat.CleanupUnpushed:
+	case "has_uncommitted", "has_stash", "has_unpushed":
 		// Not safe - has work that could be lost
 		result.Skipped = true
-		result.Reason = fmt.Sprintf("skipped: has %s", strings.TrimPrefix(string(cleanupStatus), "has_"))
+		result.Reason = fmt.Sprintf("skipped: has %s", strings.TrimPrefix(cleanupStatus, "has_"))
 
 	default:
 		// Unknown status - check git state directly as fallback

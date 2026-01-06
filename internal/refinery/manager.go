@@ -1,18 +1,16 @@
 package refinery
 
 import (
-	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"sort"
 	"strings"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/agent"
 	"github.com/steveyegge/gastown/internal/beads"
 	"github.com/steveyegge/gastown/internal/claude"
 	"github.com/steveyegge/gastown/internal/config"
@@ -33,10 +31,9 @@ var (
 
 // Manager handles refinery lifecycle and queue operations.
 type Manager struct {
-	rig          *rig.Rig
-	workDir      string
-	output       io.Writer // Output destination for user-facing messages
-	stateManager *agent.StateManager[Refinery]
+	rig     *rig.Rig
+	workDir string
+	output  io.Writer // Output destination for user-facing messages
 }
 
 // NewManager creates a new refinery manager for a rig.
@@ -45,12 +42,6 @@ func NewManager(r *rig.Rig) *Manager {
 		rig:     r,
 		workDir: r.Path,
 		output:  os.Stdout,
-		stateManager: agent.NewStateManager[Refinery](r.Path, "refinery.json", func() *Refinery {
-			return &Refinery{
-				RigName: r.Name,
-				State:   StateStopped,
-			}
-		}),
 	}
 }
 
@@ -62,7 +53,7 @@ func (m *Manager) SetOutput(w io.Writer) {
 
 // stateFile returns the path to the refinery state file.
 func (m *Manager) stateFile() string {
-	return m.stateManager.StateFile()
+	return filepath.Join(m.rig.Path, ".runtime", "refinery.json")
 }
 
 // sessionName returns the tmux session name for this refinery.
@@ -72,12 +63,33 @@ func (m *Manager) sessionName() string {
 
 // loadState loads refinery state from disk.
 func (m *Manager) loadState() (*Refinery, error) {
-	return m.stateManager.Load()
+	data, err := os.ReadFile(m.stateFile())
+	if err != nil {
+		if os.IsNotExist(err) {
+			return &Refinery{
+				RigName: m.rig.Name,
+				State:   StateStopped,
+			}, nil
+		}
+		return nil, err
+	}
+
+	var ref Refinery
+	if err := json.Unmarshal(data, &ref); err != nil {
+		return nil, err
+	}
+
+	return &ref, nil
 }
 
 // saveState persists refinery state to disk using atomic write.
 func (m *Manager) saveState(ref *Refinery) error {
-	return m.stateManager.Save(ref)
+	dir := filepath.Dir(m.stateFile())
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return err
+	}
+
+	return util.AtomicWriteJSON(m.stateFile(), ref)
 }
 
 // Status returns the current refinery status.
@@ -475,56 +487,7 @@ func (m *Manager) runTests(testCmd string) error {
 		return nil
 	}
 
-	cmd := exec.Command(parts[0], parts[1:]...) //nolint:gosec // G204: testCmd is from trusted rig config
-	cmd.Dir = m.workDir
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("%s: %s", err, strings.TrimSpace(stderr.String()))
-	}
-
-	return nil
-}
-
-// gitRun executes a git command.
-func (m *Manager) gitRun(args ...string) error {
-	cmd := exec.Command("git", args...)
-	cmd.Dir = m.workDir
-
-	var stderr bytes.Buffer
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		errMsg := strings.TrimSpace(stderr.String())
-		if errMsg != "" {
-			return fmt.Errorf("%s", errMsg)
-		}
-		return err
-	}
-
-	return nil
-}
-
-// gitOutput executes a git command and returns stdout.
-func (m *Manager) gitOutput(args ...string) (string, error) {
-	cmd := exec.Command("git", args...)
-	cmd.Dir = m.workDir
-
-	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	if err := cmd.Run(); err != nil {
-		errMsg := strings.TrimSpace(stderr.String())
-		if errMsg != "" {
-			return "", fmt.Errorf("%s", errMsg)
-		}
-		return "", err
-	}
-
-	return strings.TrimSpace(stdout.String()), nil
+	return util.ExecRun(m.workDir, parts[0], parts[1:]...)
 }
 
 // getMergeConfig loads the merge configuration from disk.
@@ -565,7 +528,7 @@ func (m *Manager) pushWithRetry(targetBranch string, config MergeConfig) error {
 			delay *= 2 // Exponential backoff
 		}
 
-		err := m.gitRun("push", "origin", targetBranch)
+		err := util.ExecRun(m.workDir, "git", "push", "origin", targetBranch)
 		if err == nil {
 			return nil // Success
 		}
