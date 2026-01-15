@@ -99,6 +99,12 @@ go install github.com/steveyegge/gastown/cmd/gt@latest
 # Add Go binaries to PATH (add to ~/.zshrc or ~/.bashrc)
 export PATH="$PATH:$HOME/go/bin"
 
+# Install Beads (macOS/Linux/FreeBSD)
+curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash
+
+# Initialize Beads (run once)
+bd init
+
 # Create workspace with git initialization
 gt install ~/gt --git
 cd ~/gt
