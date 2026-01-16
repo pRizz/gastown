@@ -6,8 +6,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/mail"
-	"github.com/steveyegge/gastown/internal/mrqueue"
+	"github.com/pRizz/gastown/internal/mail"
+	"github.com/pRizz/gastown/internal/mrqueue"
 )
 
 // DefaultRefineryHandler provides the default implementation for Refinery protocol handlers.

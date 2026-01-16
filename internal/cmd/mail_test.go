@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/steveyegge/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/config"
 )
 
 func TestMatchWorkerPattern(t *testing.T) {

@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/events"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/events"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 var slingCmd = &cobra.Command{
@@ -405,7 +405,7 @@ func runSling(cmd *cobra.Command, args []string) error {
 	}
 
 	// Hook the bead using bd update.
-	// See: https://github.com/steveyegge/gastown/issues/148
+	// See: https://github.com/pRizz/gastown/issues/148
 	hookCmd := exec.Command("bd", "--no-daemon", "update", beadID, "--status=hooked", "--assignee="+targetAgent)
 	hookCmd.Dir = beads.ResolveHookDir(townRoot, beadID, hookWorkDir)
 	hookCmd.Stderr = os.Stderr

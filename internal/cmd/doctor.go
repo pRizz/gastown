@@ -5,8 +5,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/doctor"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/doctor"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 var (

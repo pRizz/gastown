@@ -11,8 +11,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/runtime"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/runtime"
 )
 
 // timeNow is a function that returns the current time. It can be overridden in tests.

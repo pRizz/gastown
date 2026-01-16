@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/steveyegge/gastown/internal/ui"
+	"github.com/pRizz/gastown/internal/ui"
 )
 
 var (

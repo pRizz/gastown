@@ -7,9 +7,9 @@ import (
 	"os/exec"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/mail"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/mail"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // Gate command provides gt wrappers for gate operations.

@@ -9,9 +9,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/tmux"
-	"github.com/steveyegge/gastown/internal/tui/feed"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/tui/feed"
+	"github.com/pRizz/gastown/internal/workspace"
 	"golang.org/x/term"
 )
 

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/activity"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/activity"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // LiveConvoyFetcher fetches convoy data from beads.

@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/mayor"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/version"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/mayor"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/version"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 var rootCmd = &cobra.Command{

@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/constants"
-	"github.com/steveyegge/gastown/internal/tmux"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/constants"
+	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // beadInfo holds status and assignee for a bead.

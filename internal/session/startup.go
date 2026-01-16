@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/tmux"
 )
 
 // StartupNudgeConfig configures a startup nudge message.

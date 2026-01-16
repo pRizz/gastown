@@ -9,19 +9,19 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/config"
-	"github.com/steveyegge/gastown/internal/crew"
-	"github.com/steveyegge/gastown/internal/deps"
-	"github.com/steveyegge/gastown/internal/git"
-	"github.com/steveyegge/gastown/internal/polecat"
-	"github.com/steveyegge/gastown/internal/refinery"
-	"github.com/steveyegge/gastown/internal/rig"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/tmux"
-	"github.com/steveyegge/gastown/internal/wisp"
-	"github.com/steveyegge/gastown/internal/witness"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/crew"
+	"github.com/pRizz/gastown/internal/deps"
+	"github.com/pRizz/gastown/internal/git"
+	"github.com/pRizz/gastown/internal/polecat"
+	"github.com/pRizz/gastown/internal/refinery"
+	"github.com/pRizz/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/wisp"
+	"github.com/pRizz/gastown/internal/witness"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 var rigCmd = &cobra.Command{
@@ -61,7 +61,7 @@ The command also:
   - Creates <rig>/plugins/ (rig-level)
 
 Example:
-  gt rig add gastown https://github.com/steveyegge/gastown
+  gt rig add gastown https://github.com/pRizz/gastown
   gt rig add my-project git@github.com:user/repo.git --prefix mp`,
 	Args: cobra.ExactArgs(2),
 	RunE: runRigAdd,

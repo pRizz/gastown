@@ -8,11 +8,11 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/config"
-	"github.com/steveyegge/gastown/internal/mail"
-	"github.com/steveyegge/gastown/internal/tmux"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/mail"
+	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 var (

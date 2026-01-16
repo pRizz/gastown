@@ -8,13 +8,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/git"
-	"github.com/steveyegge/gastown/internal/mail"
-	"github.com/steveyegge/gastown/internal/rig"
-	"github.com/steveyegge/gastown/internal/tmux"
-	"github.com/steveyegge/gastown/internal/util"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/git"
+	"github.com/pRizz/gastown/internal/mail"
+	"github.com/pRizz/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/util"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // HandlerResult tracks the result of handling a protocol message.

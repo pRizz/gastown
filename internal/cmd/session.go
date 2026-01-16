@@ -10,15 +10,15 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/config"
-	"github.com/steveyegge/gastown/internal/git"
-	"github.com/steveyegge/gastown/internal/polecat"
-	"github.com/steveyegge/gastown/internal/rig"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/suggest"
-	"github.com/steveyegge/gastown/internal/tmux"
-	"github.com/steveyegge/gastown/internal/townlog"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/git"
+	"github.com/pRizz/gastown/internal/polecat"
+	"github.com/pRizz/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/suggest"
+	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/townlog"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // Session command flags

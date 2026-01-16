@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/constants"
-	"github.com/steveyegge/gastown/internal/git"
-	"github.com/steveyegge/gastown/internal/rig"
-	"github.com/steveyegge/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/constants"
+	"github.com/pRizz/gastown/internal/git"
+	"github.com/pRizz/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/style"
 )
 
 var initForce bool

@@ -5,11 +5,11 @@ import (
 	"os/exec"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/refinery"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/tmux"
-	"github.com/steveyegge/gastown/internal/witness"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/refinery"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/witness"
 )
 
 // RigDockedLabel is the label set on rig identity beads when docked.

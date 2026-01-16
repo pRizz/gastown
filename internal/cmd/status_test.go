@@ -8,8 +8,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/rig"
 )
 
 func captureStdout(t *testing.T, fn func()) string {

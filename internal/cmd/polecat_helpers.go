@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/polecat"
-	"github.com/steveyegge/gastown/internal/rig"
-	"github.com/steveyegge/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/polecat"
+	"github.com/pRizz/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/style"
 )
 
 // polecatTarget represents a polecat to operate on.

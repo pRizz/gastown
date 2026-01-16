@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/steveyegge/gastown/internal/util"
+	"github.com/pRizz/gastown/internal/util"
 )
 
 // State represents an agent's running state.

@@ -3,7 +3,7 @@ package cmd
 import (
 	"testing"
 
-	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/beads"
 )
 
 func TestExtractMoleculeIDFromStep(t *testing.T) {

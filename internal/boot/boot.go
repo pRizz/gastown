@@ -11,9 +11,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/config"
-	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/tmux"
 )
 
 // SessionName is the tmux session name for Boot.

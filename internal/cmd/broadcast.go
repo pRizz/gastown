@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/tmux"
 )
 
 var (

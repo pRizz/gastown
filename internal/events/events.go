@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // Event represents an activity event in Gas Town.

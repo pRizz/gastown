@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/config"
-	"github.com/steveyegge/gastown/internal/git"
-	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/git"
+	"github.com/pRizz/gastown/internal/rig"
 )
 
 // Common errors

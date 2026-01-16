@@ -10,12 +10,12 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/constants"
-	"github.com/steveyegge/gastown/internal/git"
-	"github.com/steveyegge/gastown/internal/rig"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/constants"
+	"github.com/pRizz/gastown/internal/git"
+	"github.com/pRizz/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // branchInfo holds parsed branch information.

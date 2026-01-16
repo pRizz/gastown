@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // TestQuerySessionEvents_FindsEventsFromAllLocations verifies that querySessionEvents

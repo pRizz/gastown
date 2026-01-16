@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/steveyegge/gastown/internal/shell"
-	"github.com/steveyegge/gastown/internal/state"
+	"github.com/pRizz/gastown/internal/shell"
+	"github.com/pRizz/gastown/internal/state"
 )
 
 type GlobalStateCheck struct {

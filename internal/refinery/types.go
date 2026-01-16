@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/agent"
+	"github.com/pRizz/gastown/internal/agent"
 )
 
 // State is an alias for agent.State for backwards compatibility.

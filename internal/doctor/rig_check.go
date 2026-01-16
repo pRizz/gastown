@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/steveyegge/gastown/internal/config"
-	"github.com/steveyegge/gastown/internal/constants"
+	"github.com/pRizz/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/constants"
 )
 
 // RigIsGitRepoCheck verifies the rig has a valid mayor/rig git clone.

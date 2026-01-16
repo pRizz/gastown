@@ -18,8 +18,8 @@ import (
 	"time"
 
 	"github.com/gofrs/flock"
-	"github.com/steveyegge/gastown/internal/constants"
-	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/constants"
+	"github.com/pRizz/gastown/internal/tmux"
 )
 
 const (

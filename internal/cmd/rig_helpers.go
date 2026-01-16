@@ -3,11 +3,11 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/steveyegge/gastown/internal/config"
-	"github.com/steveyegge/gastown/internal/constants"
-	"github.com/steveyegge/gastown/internal/git"
-	"github.com/steveyegge/gastown/internal/rig"
-	"github.com/steveyegge/gastown/internal/workspace"
+	"github.com/pRizz/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/constants"
+	"github.com/pRizz/gastown/internal/git"
+	"github.com/pRizz/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/workspace"
 )
 
 // getRig finds the town root and retrieves the specified rig.

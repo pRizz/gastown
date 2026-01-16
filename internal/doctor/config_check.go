@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/steveyegge/gastown/internal/constants"
+	"github.com/pRizz/gastown/internal/constants"
 )
 
 // SettingsCheck verifies each rig has a settings/ directory.

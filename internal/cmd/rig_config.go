@@ -9,10 +9,10 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/rig"
-	"github.com/steveyegge/gastown/internal/style"
-	"github.com/steveyegge/gastown/internal/wisp"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/rig"
+	"github.com/pRizz/gastown/internal/style"
+	"github.com/pRizz/gastown/internal/wisp"
 )
 
 var rigConfigCmd = &cobra.Command{

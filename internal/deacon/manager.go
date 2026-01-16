@@ -7,12 +7,12 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/claude"
-	"github.com/steveyegge/gastown/internal/config"
-	"github.com/steveyegge/gastown/internal/constants"
-	"github.com/steveyegge/gastown/internal/session"
-	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/claude"
+	"github.com/pRizz/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/constants"
+	"github.com/pRizz/gastown/internal/session"
+	"github.com/pRizz/gastown/internal/tmux"
 )
 
 // Common errors

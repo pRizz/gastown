@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/beads"
-	"github.com/steveyegge/gastown/internal/daemon"
+	"github.com/pRizz/gastown/internal/beads"
+	"github.com/pRizz/gastown/internal/daemon"
 )
 
 // bdDoctorResult represents the JSON output from bd doctor --json.

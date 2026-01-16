@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/steveyegge/gastown/internal/config"
+	"github.com/pRizz/gastown/internal/config"
 )
 
 func TestNewPatrolRolesHavePromptsCheck(t *testing.T) {

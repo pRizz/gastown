@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/steveyegge/gastown/internal/session"
-	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/pRizz/gastown/internal/session"
+	"github.com/pRizz/gastown/internal/tmux"
 )
 
 // StaleHookConfig holds configurable parameters for stale hook detection.
