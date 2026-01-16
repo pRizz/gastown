@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pRizz/gastown/internal/rig"
-	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/tmux"
 )
 
 func TestSessionName(t *testing.T) {

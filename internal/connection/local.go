@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
-	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/tmux"
 )
 
 // LocalConnection implements Connection for local file and command operations.

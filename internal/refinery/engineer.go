@@ -13,12 +13,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/git"
-	"github.com/pRizz/gastown/internal/mail"
-	"github.com/pRizz/gastown/internal/mrqueue"
-	"github.com/pRizz/gastown/internal/protocol"
-	"github.com/pRizz/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/git"
+	"github.com/steveyegge/gastown/internal/mail"
+	"github.com/steveyegge/gastown/internal/mrqueue"
+	"github.com/steveyegge/gastown/internal/protocol"
+	"github.com/steveyegge/gastown/internal/rig"
 )
 
 // MergeQueueConfig holds configuration for the merge queue processor.

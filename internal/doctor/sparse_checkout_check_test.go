@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pRizz/gastown/internal/git"
+	"github.com/steveyegge/gastown/internal/git"
 )
 
 func TestNewSparseCheckoutCheck(t *testing.T) {

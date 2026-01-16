@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/runtime"
+	"github.com/steveyegge/gastown/internal/runtime"
 )
 
 // Common errors

@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pRizz/gastown/internal/git"
-	"github.com/pRizz/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/git"
+	"github.com/steveyegge/gastown/internal/rig"
 )
 
 func TestStateIsActive(t *testing.T) {

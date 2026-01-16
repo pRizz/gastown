@@ -9,12 +9,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/constants"
-	"github.com/pRizz/gastown/internal/rig"
-	"github.com/pRizz/gastown/internal/session"
-	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/constants"
+	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/session"
+	"github.com/steveyegge/gastown/internal/tmux"
 )
 
 // BeadsMessage represents a message from gt mail inbox --json.

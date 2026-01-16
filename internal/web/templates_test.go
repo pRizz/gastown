@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pRizz/gastown/internal/activity"
+	"github.com/steveyegge/gastown/internal/activity"
 )
 
 func TestConvoyTemplate_RendersConvoyList(t *testing.T) {

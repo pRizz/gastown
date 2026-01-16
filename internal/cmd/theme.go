@@ -7,10 +7,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/session"
-	"github.com/pRizz/gastown/internal/tmux"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/session"
+	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 var (

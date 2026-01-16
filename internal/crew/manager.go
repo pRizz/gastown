@@ -10,14 +10,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/claude"
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/git"
-	"github.com/pRizz/gastown/internal/rig"
-	"github.com/pRizz/gastown/internal/session"
-	"github.com/pRizz/gastown/internal/tmux"
-	"github.com/pRizz/gastown/internal/util"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/claude"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/git"
+	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/session"
+	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/util"
 )
 
 // Common errors

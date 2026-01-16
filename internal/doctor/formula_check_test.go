@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/pRizz/gastown/internal/formula"
+	"github.com/steveyegge/gastown/internal/formula"
 )
 
 func TestNewFormulaCheck(t *testing.T) {

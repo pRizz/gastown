@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/beads"
 )
 
 // BeadsDatabaseCheck verifies that the beads database is properly initialized.

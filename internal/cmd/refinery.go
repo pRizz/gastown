@@ -6,12 +6,12 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/mrqueue"
-	"github.com/pRizz/gastown/internal/refinery"
-	"github.com/pRizz/gastown/internal/rig"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/tmux"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/mrqueue"
+	"github.com/steveyegge/gastown/internal/refinery"
+	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 // Refinery command flags

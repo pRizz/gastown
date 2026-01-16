@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/beads"
 )
 
 // HookAttachmentValidCheck verifies that attached molecules exist and are not closed.

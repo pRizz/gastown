@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/events"
-	"github.com/pRizz/gastown/internal/mail"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/events"
+	"github.com/steveyegge/gastown/internal/mail"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 func runMailSend(cmd *cobra.Command, args []string) error {

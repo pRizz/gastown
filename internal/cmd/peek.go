@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/session"
+	"github.com/steveyegge/gastown/internal/session"
 	"github.com/spf13/cobra"
 )
 

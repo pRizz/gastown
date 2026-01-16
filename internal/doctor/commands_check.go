@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/templates"
+	"github.com/steveyegge/gastown/internal/templates"
 )
 
 // CommandsCheck validates that town-level .claude/commands/ is provisioned.

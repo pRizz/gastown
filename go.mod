@@ -1,4 +1,4 @@
-module github.com/pRizz/gastown
+module github.com/steveyegge/gastown
 
 go 1.24.2
 

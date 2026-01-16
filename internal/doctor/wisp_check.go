@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/pRizz/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/beads"
 )
 
 // WispGCCheck detects and cleans orphaned wisps that are older than a threshold.

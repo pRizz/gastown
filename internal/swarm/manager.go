@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/rig"
 )
 
 // Common errors

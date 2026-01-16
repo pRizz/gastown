@@ -11,16 +11,16 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/constants"
-	"github.com/pRizz/gastown/internal/crew"
-	"github.com/pRizz/gastown/internal/mail"
-	"github.com/pRizz/gastown/internal/runtime"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/tmux"
-	"github.com/pRizz/gastown/internal/townlog"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/constants"
+	"github.com/steveyegge/gastown/internal/crew"
+	"github.com/steveyegge/gastown/internal/mail"
+	"github.com/steveyegge/gastown/internal/runtime"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/townlog"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 func runCrewRemove(cmd *cobra.Command, args []string) error {

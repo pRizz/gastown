@@ -7,10 +7,10 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/constants"
-	"github.com/pRizz/gastown/internal/deacon"
-	"github.com/pRizz/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/constants"
+	"github.com/steveyegge/gastown/internal/deacon"
+	"github.com/steveyegge/gastown/internal/style"
 )
 
 // MoleculeCurrentOutput represents the JSON output of bd mol current.

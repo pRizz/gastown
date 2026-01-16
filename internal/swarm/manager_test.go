@@ -3,7 +3,7 @@ package swarm
 import (
 	"testing"
 
-	"github.com/pRizz/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/rig"
 )
 
 // TestLoadSwarmNotFound tests that LoadSwarm returns error for missing epic.

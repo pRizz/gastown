@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/beads"
 )
 
 // AgentBeadsCheck verifies that agent beads exist for all agents.

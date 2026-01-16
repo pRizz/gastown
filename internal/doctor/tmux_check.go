@@ -5,8 +5,8 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/session"
-	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/session"
+	"github.com/steveyegge/gastown/internal/tmux"
 )
 
 // LinkedPaneCheck detects tmux sessions that share panes,

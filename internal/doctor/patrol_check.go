@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/templates"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/templates"
 )
 
 // PatrolMoleculesExistCheck verifies that patrol molecules exist for each rig.

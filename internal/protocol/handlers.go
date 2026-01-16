@@ -3,7 +3,7 @@ package protocol
 import (
 	"fmt"
 
-	"github.com/pRizz/gastown/internal/mail"
+	"github.com/steveyegge/gastown/internal/mail"
 )
 
 // Handler processes a protocol message and returns an error if processing failed.

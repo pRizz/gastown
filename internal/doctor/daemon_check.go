@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/pRizz/gastown/internal/daemon"
+	"github.com/steveyegge/gastown/internal/daemon"
 )
 
 // DaemonCheck verifies the daemon is running.

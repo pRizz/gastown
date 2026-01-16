@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/pRizz/gastown/internal/events"
+	"github.com/steveyegge/gastown/internal/events"
 )
 
 // FeedFile is the name of the curated feed file.

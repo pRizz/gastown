@@ -14,7 +14,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/pRizz/gastown/internal/util"
+	"github.com/steveyegge/gastown/internal/util"
 )
 
 // Config holds daemon configuration.

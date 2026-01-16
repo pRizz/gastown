@@ -7,7 +7,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/pRizz/gastown/internal/ui"
+	"github.com/steveyegge/gastown/internal/ui"
 )
 
 // Category constants for grouping checks

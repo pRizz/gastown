@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/tmux"
 )
 
 // ThemeCheck verifies tmux sessions have correct themes applied.

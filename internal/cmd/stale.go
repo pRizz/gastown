@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/version"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/version"
 )
 
 var staleJSON bool

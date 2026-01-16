@@ -8,13 +8,13 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/constants"
-	"github.com/pRizz/gastown/internal/crew"
-	"github.com/pRizz/gastown/internal/git"
-	"github.com/pRizz/gastown/internal/rig"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/constants"
+	"github.com/steveyegge/gastown/internal/crew"
+	"github.com/steveyegge/gastown/internal/git"
+	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 // inferRigFromCwd tries to determine the rig from the current directory.

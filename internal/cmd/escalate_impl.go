@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/events"
-	"github.com/pRizz/gastown/internal/mail"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/events"
+	"github.com/steveyegge/gastown/internal/mail"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 func runEscalate(cmd *cobra.Command, args []string) error {

@@ -6,15 +6,15 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/constants"
-	"github.com/pRizz/gastown/internal/events"
-	"github.com/pRizz/gastown/internal/git"
-	"github.com/pRizz/gastown/internal/polecat"
-	"github.com/pRizz/gastown/internal/rig"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/tmux"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/constants"
+	"github.com/steveyegge/gastown/internal/events"
+	"github.com/steveyegge/gastown/internal/git"
+	"github.com/steveyegge/gastown/internal/polecat"
+	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 // SpawnedPolecatInfo contains info about a spawned polecat session.

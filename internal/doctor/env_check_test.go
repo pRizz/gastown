@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/pRizz/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/config"
 )
 
 // mockEnvReader implements SessionEnvReader for testing.

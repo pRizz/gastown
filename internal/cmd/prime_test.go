@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pRizz/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/beads"
 )
 
 func writeTestRoutes(t *testing.T, townRoot string, routes []beads.Route) {

@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pRizz/gastown/internal/constants"
+	"github.com/steveyegge/gastown/internal/constants"
 )
 
 func TestSessionHookCheck_UsesSessionStartScript(t *testing.T) {

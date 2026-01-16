@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pRizz/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/rig"
 )
 
 func setupTestManager(t *testing.T) (*Manager, string) {

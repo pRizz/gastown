@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pRizz/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/beads"
 )
 
 func TestBuildWitnessStartCommand_UsesRoleConfig(t *testing.T) {

@@ -12,11 +12,11 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/events"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/townlog"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/events"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/townlog"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 // Audit command flags

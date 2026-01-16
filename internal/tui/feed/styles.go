@@ -3,8 +3,8 @@ package feed
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/pRizz/gastown/internal/constants"
-	"github.com/pRizz/gastown/internal/ui"
+	"github.com/steveyegge/gastown/internal/constants"
+	"github.com/steveyegge/gastown/internal/ui"
 )
 
 // Color palette using Ayu theme colors from ui package

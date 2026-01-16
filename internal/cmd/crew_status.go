@@ -8,11 +8,11 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/crew"
-	"github.com/pRizz/gastown/internal/git"
-	"github.com/pRizz/gastown/internal/mail"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/tmux"
+	"github.com/steveyegge/gastown/internal/crew"
+	"github.com/steveyegge/gastown/internal/git"
+	"github.com/steveyegge/gastown/internal/mail"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/tmux"
 )
 
 // CrewStatusItem represents detailed status for a crew worker.

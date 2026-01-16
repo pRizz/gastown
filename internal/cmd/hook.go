@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/beads"
-	"github.com/pRizz/gastown/internal/events"
-	"github.com/pRizz/gastown/internal/runtime"
-	"github.com/pRizz/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/beads"
+	"github.com/steveyegge/gastown/internal/events"
+	"github.com/steveyegge/gastown/internal/runtime"
+	"github.com/steveyegge/gastown/internal/style"
 )
 
 var hookCmd = &cobra.Command{

@@ -16,9 +16,9 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/style"
-	"github.com/pRizz/gastown/internal/tui/convoy"
-	"github.com/pRizz/gastown/internal/workspace"
+	"github.com/steveyegge/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/tui/convoy"
+	"github.com/steveyegge/gastown/internal/workspace"
 )
 
 // generateShortID generates a short random ID (5 lowercase chars).

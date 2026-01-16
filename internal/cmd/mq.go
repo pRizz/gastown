@@ -7,11 +7,11 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.com/pRizz/gastown/internal/config"
-	"github.com/pRizz/gastown/internal/git"
-	"github.com/pRizz/gastown/internal/refinery"
-	"github.com/pRizz/gastown/internal/rig"
-	"github.com/pRizz/gastown/internal/style"
+	"github.com/steveyegge/gastown/internal/config"
+	"github.com/steveyegge/gastown/internal/git"
+	"github.com/steveyegge/gastown/internal/refinery"
+	"github.com/steveyegge/gastown/internal/rig"
+	"github.com/steveyegge/gastown/internal/style"
 )
 
 // MQ command flags

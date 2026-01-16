@@ -119,7 +119,7 @@ func TestBeadsDbInitAfterClone(t *testing.T) {
 
 	t.Run("TrackedRepoWithExistingPrefix", func(t *testing.T) {
 		// GitHub Issue #72: gt rig add should detect existing prefix from tracked beads
-		// https://github.com/pRizz/gastown/issues/72
+		// https://github.com/steveyegge/gastown/issues/72
 		//
 		// This tests that when a tracked beads repo has existing issues in issues.jsonl,
 		// gt rig add can detect the prefix from those issues WITHOUT --prefix flag.
