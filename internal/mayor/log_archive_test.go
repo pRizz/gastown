@@ -1,6 +1,9 @@
 package mayor
 
-import "testing"
+import (
+	"hash/maphash"
+	"testing"
+)
 
 func TestFindBestOverlapExact(t *testing.T) {
 	t.Parallel()
@@ -8,7 +11,10 @@ func TestFindBestOverlapExact(t *testing.T) {
 	prev := []string{"one", "two", "three", "four"}
 	next := []string{"three", "four", "five", "six"}
 
-	result, ok := findBestOverlap(prev, next, 1, 1.0)
+	seed := maphash.MakeSeed()
+	prevHashes := hashLines(prev, seed)
+	nextHashes := hashLines(next, seed)
+	result, ok := findBestOverlap(prev, next, prevHashes, nextHashes, 1, 1.0)
 	if !ok {
 		t.Fatal("expected overlap to be detected")
 	}
@@ -26,7 +32,10 @@ func TestFindBestOverlapThreshold(t *testing.T) {
 	prev := []string{"a", "b", "c", "d", "e", "f"}
 	next := []string{"c", "x", "e", "f", "g", "h"}
 
-	result, ok := findBestOverlap(prev, next, 4, 0.7)
+	seed := maphash.MakeSeed()
+	prevHashes := hashLines(prev, seed)
+	nextHashes := hashLines(next, seed)
+	result, ok := findBestOverlap(prev, next, prevHashes, nextHashes, 4, 0.7)
 	if !ok {
 		t.Fatal("expected overlap to be detected")
 	}
@@ -44,7 +53,10 @@ func TestFindChangedRanges(t *testing.T) {
 	prev := []string{"zero", "one", "two", "three", "four"}
 	next := []string{"zero", "x", "two", "y", "four", "five"}
 
-	ranges := findChangedRanges(prev, next)
+	seed := maphash.MakeSeed()
+	prevHashes := hashLines(prev, seed)
+	nextHashes := hashLines(next, seed)
+	ranges := findChangedRanges(prev, next, prevHashes, nextHashes)
 	if len(ranges) != 3 {
 		t.Fatalf("expected 3 ranges, got %d", len(ranges))
 	}
@@ -58,4 +70,25 @@ func TestFindChangedRanges(t *testing.T) {
 	assertRange(0, 1, 2)
 	assertRange(1, 3, 4)
 	assertRange(2, 5, 6)
+}
+
+func TestFindExactOverlapKMP(t *testing.T) {
+	t.Parallel()
+
+	prev := []string{"one", "two", "three", "four"}
+	next := []string{"three", "four", "five"}
+
+	seed := maphash.MakeSeed()
+	prevHashes := hashLines(prev, seed)
+	nextHashes := hashLines(next, seed)
+	result, ok := findExactOverlapKMP(prevHashes, nextHashes, 1)
+	if !ok {
+		t.Fatal("expected exact overlap to be detected")
+	}
+	if result.size != 2 {
+		t.Fatalf("expected overlap size 2, got %d", result.size)
+	}
+	if result.score != 1.0 {
+		t.Fatalf("expected overlap score 1.0, got %f", result.score)
+	}
 }

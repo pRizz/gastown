@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"hash/maphash"
 	"log"
 	"os"
 	"os/exec"
@@ -290,8 +291,10 @@ type logArchiver struct {
 	journalWriter   *bufio.Writer
 	activeRaw       []string
 	activeNorm      []string
+	activeHashes    []uint64
 	baseIndex       int
 	missingSessions int
+	hashSeed        maphash.Seed
 }
 
 type journalEvent struct {
@@ -326,6 +329,7 @@ func newLogArchiver(cfg LogArchiveConfig, t *tmux.Tmux, logger *log.Logger) (*lo
 		archiveWriter: bufio.NewWriter(archiveFile),
 		journalFile:   journalFile,
 		journalWriter: bufio.NewWriter(journalFile),
+		hashSeed:      maphash.MakeSeed(),
 	}, nil
 }
 
@@ -377,6 +381,7 @@ func (a *logArchiver) tick() error {
 	}
 
 	nextNorm := normalizeLines(nextRaw, a.cfg)
+	nextHashes := hashLines(nextNorm, a.hashSeed)
 
 	if len(a.activeRaw) == 0 && len(nextRaw) == 0 && len(a.activeNorm) == 0 {
 		return nil
@@ -385,6 +390,7 @@ func (a *logArchiver) tick() error {
 	if len(a.activeRaw) == 0 && len(a.activeNorm) == 0 {
 		a.activeRaw = nextRaw
 		a.activeNorm = nextNorm
+		a.activeHashes = nextHashes
 		if err := a.writeLive(nextRaw); err != nil {
 			return err
 		}
@@ -394,19 +400,23 @@ func (a *logArchiver) tick() error {
 		})
 	}
 
-	overlap, ok := findBestOverlap(a.activeNorm, nextNorm, a.cfg.MinOverlapLines, a.cfg.OverlapThreshold)
+	overlap, ok := findExactOverlapKMP(a.activeHashes, nextHashes, a.cfg.MinOverlapLines)
+	if !ok {
+		overlap, ok = findBestOverlap(a.activeNorm, nextNorm, a.activeHashes, nextHashes, a.cfg.MinOverlapLines, a.cfg.OverlapThreshold)
+	}
 	if ok {
-		if err := a.handleScroll(overlap, nextRaw, nextNorm); err != nil {
+		if err := a.handleScroll(overlap, nextRaw, nextNorm, nextHashes); err != nil {
 			return err
 		}
 	} else {
-		if err := a.handleReplace(nextRaw, nextNorm); err != nil {
+		if err := a.handleReplace(nextRaw, nextNorm, nextHashes); err != nil {
 			return err
 		}
 	}
 
 	a.activeRaw = nextRaw
 	a.activeNorm = nextNorm
+	a.activeHashes = nextHashes
 
 	if err := a.writeLive(nextRaw); err != nil {
 		return err
@@ -414,7 +424,7 @@ func (a *logArchiver) tick() error {
 	return nil
 }
 
-func (a *logArchiver) handleScroll(overlap overlapResult, nextRaw []string, nextNorm []string) error {
+func (a *logArchiver) handleScroll(overlap overlapResult, nextRaw []string, nextNorm []string, nextHashes []uint64) error {
 	scrolledOff := len(a.activeRaw) - overlap.size
 	if scrolledOff > 0 {
 		if err := a.appendCommitted(a.activeRaw[:scrolledOff]); err != nil {
@@ -428,7 +438,7 @@ func (a *logArchiver) handleScroll(overlap overlapResult, nextRaw []string, next
 		if overlapStart < 0 {
 			overlapStart = 0
 		}
-		if err := a.replaceOverlap(overlapStart, overlap.size, nextRaw, nextNorm); err != nil {
+		if err := a.replaceOverlap(overlapStart, overlap.size, nextRaw, nextNorm, nextHashes); err != nil {
 			return err
 		}
 	}
@@ -446,8 +456,8 @@ func (a *logArchiver) handleScroll(overlap overlapResult, nextRaw []string, next
 	return nil
 }
 
-func (a *logArchiver) handleReplace(nextRaw []string, nextNorm []string) error {
-	ranges := findChangedRanges(a.activeNorm, nextNorm)
+func (a *logArchiver) handleReplace(nextRaw []string, nextNorm []string, nextHashes []uint64) error {
+	ranges := findChangedRanges(a.activeNorm, nextNorm, a.activeHashes, nextHashes)
 	for _, r := range ranges {
 		if err := a.writeJournal(journalEvent{
 			Type:  "replace",
@@ -461,20 +471,20 @@ func (a *logArchiver) handleReplace(nextRaw []string, nextNorm []string) error {
 	return nil
 }
 
-func (a *logArchiver) replaceOverlap(overlapStart int, size int, nextRaw []string, nextNorm []string) error {
+func (a *logArchiver) replaceOverlap(overlapStart int, size int, nextRaw []string, nextNorm []string, nextHashes []uint64) error {
 	end := overlapStart + size
 	if end > len(a.activeNorm) {
 		end = len(a.activeNorm)
 	}
-	if size <= 0 || overlapStart >= end {
+	if size <= 0 || overlapStart >= end || len(a.activeHashes) == 0 || len(nextHashes) == 0 {
 		return nil
 	}
 
 	var ranges []lineRange
 	currentStart := -1
-	for i := 0; i < size && overlapStart+i < len(a.activeNorm) && i < len(nextNorm); i++ {
+	for i := 0; i < size && overlapStart+i < len(a.activeNorm) && overlapStart+i < len(a.activeHashes) && i < len(nextNorm) && i < len(nextHashes); i++ {
 		prevIdx := overlapStart + i
-		if a.activeNorm[prevIdx] != nextNorm[i] {
+		if !lineEqual(a.activeNorm[prevIdx], nextNorm[i], a.activeHashes[prevIdx], nextHashes[i]) {
 			if currentStart == -1 {
 				currentStart = i
 			}
@@ -549,7 +559,15 @@ type overlapResult struct {
 	score float64
 }
 
-func findBestOverlap(prev, next []string, minOverlap int, threshold float64) (overlapResult, bool) {
+func findExactOverlapKMP(prevHashes, nextHashes []uint64, minOverlap int) (overlapResult, bool) {
+	size := longestOverlapKMP(prevHashes, nextHashes)
+	if size >= minOverlap {
+		return overlapResult{size: size, score: 1.0}, true
+	}
+	return overlapResult{}, false
+}
+
+func findBestOverlap(prev, next []string, prevHashes, nextHashes []uint64, minOverlap int, threshold float64) (overlapResult, bool) {
 	maxOverlap := min(len(prev), len(next))
 	if maxOverlap == 0 {
 		return overlapResult{}, false
@@ -563,7 +581,7 @@ func findBestOverlap(prev, next []string, minOverlap int, threshold float64) (ov
 		matches := 0
 		for i := 0; i < size; i++ {
 			prevIdx := len(prev) - size + i
-			if prevIdx >= 0 && prev[prevIdx] == next[i] {
+			if prevIdx >= 0 && lineEqual(prev[prevIdx], next[i], prevHashes[prevIdx], nextHashes[i]) {
 				matches++
 			}
 		}
@@ -582,13 +600,13 @@ func findBestOverlap(prev, next []string, minOverlap int, threshold float64) (ov
 	return overlapResult{}, false
 }
 
-func findChangedRanges(prev, next []string) []lineRange {
+func findChangedRanges(prev, next []string, prevHashes, nextHashes []uint64) []lineRange {
 	maxLen := min(len(prev), len(next))
 	var ranges []lineRange
 	start := -1
 
 	for i := 0; i < maxLen; i++ {
-		if prev[i] != next[i] {
+		if !lineEqual(prev[i], next[i], prevHashes[i], nextHashes[i]) {
 			if start == -1 {
 				start = i
 			}
@@ -643,6 +661,67 @@ func stripANSI(s string) string {
 		}
 	}
 	return b.String()
+}
+
+func hashLines(lines []string, seed maphash.Seed) []uint64 {
+	result := make([]uint64, len(lines))
+	var h maphash.Hash
+	h.SetSeed(seed)
+	for i, line := range lines {
+		h.Reset()
+		_, _ = h.WriteString(line)
+		result[i] = h.Sum64()
+	}
+	return result
+}
+
+func longestOverlapKMP(prevHashes, nextHashes []uint64) int {
+	if len(prevHashes) == 0 || len(nextHashes) == 0 {
+		return 0
+	}
+
+	prefix := prefixFunction(nextHashes)
+	j := 0
+	for i, value := range prevHashes {
+		for j > 0 && value != nextHashes[j] {
+			j = prefix[j-1]
+		}
+		if value == nextHashes[j] {
+			j++
+		}
+		if j == len(nextHashes) {
+			if i == len(prevHashes)-1 {
+				return j
+			}
+			j = prefix[j-1]
+		}
+	}
+	return j
+}
+
+func prefixFunction(values []uint64) []int {
+	if len(values) == 0 {
+		return nil
+	}
+	prefix := make([]int, len(values))
+	for i := 1; i < len(values); i++ {
+		j := prefix[i-1]
+		for j > 0 && values[i] != values[j] {
+			j = prefix[j-1]
+		}
+		if values[i] == values[j] {
+			j++
+		}
+		prefix[i] = j
+	}
+	return prefix
+}
+
+func lineEqual(prevLine, nextLine string, prevHash, nextHash uint64) bool {
+	if prevHash != nextHash {
+		return false
+	}
+	return prevLine == nextLine
 }
 
 func min(a, b int) int {
