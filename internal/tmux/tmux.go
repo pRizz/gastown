@@ -45,6 +45,21 @@ func (t *Tmux) run(args ...string) (string, error) {
 	return strings.TrimSpace(stdout.String()), nil
 }
 
+// runRaw executes a tmux command and returns raw stdout without trimming.
+func (t *Tmux) runRaw(args ...string) (string, error) {
+	cmd := exec.Command("tmux", args...)
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		return "", t.wrapError(err, stderr.String(), args)
+	}
+
+	return stdout.String(), nil
+}
+
 // wrapError wraps tmux errors with context.
 func (t *Tmux) wrapError(err error, stderr string, args []string) error {
 	stderr = strings.TrimSpace(stderr)
@@ -508,6 +523,31 @@ func (t *Tmux) CapturePaneLines(session string, lines int) ([]string, error) {
 	if out == "" {
 		return nil, nil
 	}
+	return strings.Split(out, "\n"), nil
+}
+
+// CapturePaneRaw captures the visible content of a pane with optional ANSI escapes.
+func (t *Tmux) CapturePaneRaw(session string, lines int, includeANSI bool) (string, error) {
+	args := []string{"capture-pane", "-p", "-t", session}
+	if includeANSI {
+		args = append(args, "-e")
+	}
+	if lines > 0 {
+		args = append(args, "-S", fmt.Sprintf("-%d", lines))
+	}
+	return t.runRaw(args...)
+}
+
+// CapturePaneLinesRaw captures the last N lines of a pane with optional ANSI escapes.
+func (t *Tmux) CapturePaneLinesRaw(session string, lines int, includeANSI bool) ([]string, error) {
+	out, err := t.CapturePaneRaw(session, lines, includeANSI)
+	if err != nil {
+		return nil, err
+	}
+	if out == "" {
+		return nil, nil
+	}
+	out = strings.TrimSuffix(out, "\n")
 	return strings.Split(out, "\n"), nil
 }
 

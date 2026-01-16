@@ -60,6 +60,7 @@ func (m *Manager) Start(agentOverride string) error {
 	if running {
 		// Session exists - check if Claude is actually running (healthy vs zombie)
 		if t.IsClaudeRunning(sessionID) {
+			_ = EnsureLogArchiver(m.townRoot)
 			return ErrAlreadyRunning
 		}
 		// Zombie - tmux alive but Claude dead. Kill and recreate.
@@ -131,6 +132,8 @@ func (m *Manager) Start(agentOverride string) error {
 	// Wait for beacon to be fully processed (needs to be separate prompt)
 	time.Sleep(2 * time.Second)
 	_ = t.NudgeSession(sessionID, session.PropulsionNudgeForRole("mayor", mayorDir)) // Non-fatal
+
+	_ = EnsureLogArchiver(m.townRoot)
 
 	return nil
 }
