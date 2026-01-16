@@ -545,19 +545,12 @@ Mayor log archives are written under `~/gt/logs/mayor/`:
 - `archive.log` - committed transcript (append-only)
 - `archive.live` - mutable tail (latest screen window)
 - `archive.journal.jsonl` - patch journal (append/replace events)
-
-Control the background archiver:
-
-```bash
-gt mayor archive start
-gt mayor archive status
-gt mayor archive stop
-```
+The archiver starts automatically with the Mayor session.
 
 Configuration (environment variables):
 
 - `GT_MAYOR_LOG_ENABLED` (default: true)
-- `GT_MAYOR_LOG_INTERVAL_MS` (default: 500)
+- `GT_MAYOR_LOG_INTERVAL_MS` (default: 242)
 - `GT_MAYOR_LOG_LINES` (default: 200)
 - `GT_MAYOR_LOG_ANSI` (default: true)
 

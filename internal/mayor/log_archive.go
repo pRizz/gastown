@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	defaultLogArchiveIntervalMs    = 500
+	defaultLogArchiveIntervalMs    = 242
 	defaultLogArchiveLines         = 200
 	defaultLogArchiveOverlap       = 0.85
 	defaultLogArchiveMinOverlap    = 5
@@ -41,6 +41,7 @@ const (
 	envMayorLogOverlapThreshold    = "GT_MAYOR_LOG_OVERLAP_THRESHOLD"
 	envMayorLogMinOverlap          = "GT_MAYOR_LOG_MIN_OVERLAP"
 	envMayorLogMissingSessionLimit = "GT_MAYOR_LOG_MISSING_LIMIT"
+	envMayorLogArchiverRun         = "GT_MAYOR_LOG_ARCHIVER_RUN"
 )
 
 var errLogArchiveDone = errors.New("mayor log archiver stopping")
@@ -180,11 +181,12 @@ func StartLogArchiver(cfg LogArchiveConfig) error {
 		return fmt.Errorf("finding executable: %w", err)
 	}
 
-	cmd := exec.Command(gtPath, "mayor", "archive", "run")
+	cmd := exec.Command(gtPath)
 	cmd.Dir = cfg.TownRoot
 	cmd.Stdin = nil
 	cmd.Stdout = nil
 	cmd.Stderr = nil
+	cmd.Env = append(os.Environ(), envMayorLogArchiverRun+"=1")
 
 	if err := cmd.Start(); err != nil {
 		return fmt.Errorf("starting log archiver: %w", err)

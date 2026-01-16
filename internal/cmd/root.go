@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/steveyegge/gastown/internal/mayor"
 	"github.com/steveyegge/gastown/internal/style"
 	"github.com/steveyegge/gastown/internal/version"
 	"github.com/steveyegge/gastown/internal/workspace"
@@ -158,6 +159,19 @@ func checkStaleBinaryWarning() {
 // Execute runs the root command and returns an exit code.
 // The caller (main) should call os.Exit with this code.
 func Execute() int {
+	if os.Getenv("GT_MAYOR_LOG_ARCHIVER_RUN") == "1" {
+		townRoot, err := workspace.FindFromCwdOrError()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		if err := mayor.RunLogArchiver(townRoot); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return 1
+		}
+		return 0
+	}
+
 	if err := rootCmd.Execute(); err != nil {
 		// Check for silent exit (scripting commands that signal status via exit code)
 		if code, ok := IsSilentExit(err); ok {
