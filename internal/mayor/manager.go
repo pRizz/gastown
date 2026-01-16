@@ -3,7 +3,9 @@ package mayor
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"time"
 
@@ -23,7 +25,8 @@ var (
 
 // Manager handles mayor lifecycle operations.
 type Manager struct {
-	townRoot string
+	townRoot    string
+	archiverCmd *exec.Cmd // Background archiver process
 }
 
 // NewManager creates a new mayor manager for a town.
@@ -132,11 +135,20 @@ func (m *Manager) Start(agentOverride string) error {
 	time.Sleep(2 * time.Second)
 	_ = t.NudgeSession(sessionID, session.PropulsionNudgeForRole("mayor", mayorDir)) // Non-fatal
 
+	// Start archiver daemon for session logging
+	if err := m.startArchiver(); err != nil {
+		// Log warning but don't fail session start - archiver is non-critical
+		log.Printf("Warning: failed to start archiver: %v", err)
+	}
+
 	return nil
 }
 
 // Stop stops the mayor session.
 func (m *Manager) Stop() error {
+	// Stop archiver first (best-effort, don't fail if archiver not running)
+	m.stopArchiver()
+
 	t := tmux.NewTmux()
 	sessionID := m.SessionName()
 
@@ -181,4 +193,53 @@ func (m *Manager) Status() (*tmux.SessionInfo, error) {
 	}
 
 	return t.GetSessionInfo(sessionID)
+}
+
+// startArchiver starts the archiver daemon for the mayor session.
+// The archiver runs as a background process capturing tmux pane output.
+func (m *Manager) startArchiver() error {
+	sessionID := m.SessionName()
+
+	// Build archiver command
+	// Uses 'gt archive start' which runs until SIGTERM
+	cmd := exec.Command("gt", "archive", "start", sessionID,
+		"--storage", filepath.Join(m.townRoot, ".logs"),
+	)
+
+	// Redirect output to /dev/null to avoid cluttering terminal
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+
+	// Start the process (don't wait for it to complete)
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("starting archiver: %w", err)
+	}
+
+	// Store the command for cleanup
+	m.archiverCmd = cmd
+
+	// Start a goroutine to wait for the process to prevent zombies
+	go func() {
+		_ = cmd.Wait()
+	}()
+
+	return nil
+}
+
+// stopArchiver stops the archiver daemon gracefully.
+func (m *Manager) stopArchiver() {
+	if m.archiverCmd == nil || m.archiverCmd.Process == nil {
+		return
+	}
+
+	// Send SIGTERM for graceful shutdown
+	if err := m.archiverCmd.Process.Signal(os.Interrupt); err != nil {
+		// Process might already be dead, try SIGKILL
+		_ = m.archiverCmd.Process.Kill()
+	}
+
+	// Give it a moment to shut down gracefully
+	time.Sleep(100 * time.Millisecond)
+
+	m.archiverCmd = nil
 }
