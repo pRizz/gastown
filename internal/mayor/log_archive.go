@@ -381,6 +381,7 @@ func (a *logArchiver) tick() error {
 	}
 
 	nextNorm := normalizeLines(nextRaw, a.cfg)
+	// Hash normalized lines once per tick for fast overlap and change detection.
 	nextHashes := hashLines(nextNorm, a.hashSeed)
 
 	if len(a.activeRaw) == 0 && len(nextRaw) == 0 && len(a.activeNorm) == 0 {
@@ -400,6 +401,7 @@ func (a *logArchiver) tick() error {
 		})
 	}
 
+	// Fast path: exact overlap via KMP on hashes (O(H)); fallback is scored overlap.
 	overlap, ok := findExactOverlapKMP(a.activeHashes, nextHashes, a.cfg.MinOverlapLines)
 	if !ok {
 		overlap, ok = findBestOverlap(a.activeNorm, nextNorm, a.activeHashes, nextHashes, a.cfg.MinOverlapLines, a.cfg.OverlapThreshold)
@@ -559,6 +561,7 @@ type overlapResult struct {
 	score float64
 }
 
+// findExactOverlapKMP finds longest suffix/prefix overlap in O(H) via KMP.
 func findExactOverlapKMP(prevHashes, nextHashes []uint64, minOverlap int) (overlapResult, bool) {
 	size := longestOverlapKMP(prevHashes, nextHashes)
 	if size >= minOverlap {
@@ -600,6 +603,7 @@ func findBestOverlap(prev, next []string, prevHashes, nextHashes []uint64, minOv
 	return overlapResult{}, false
 }
 
+// findChangedRanges uses hashes to skip equal lines cheaply.
 func findChangedRanges(prev, next []string, prevHashes, nextHashes []uint64) []lineRange {
 	maxLen := min(len(prev), len(next))
 	var ranges []lineRange
@@ -663,6 +667,7 @@ func stripANSI(s string) string {
 	return b.String()
 }
 
+// hashLines builds per-line hashes to avoid repeated string comparisons.
 func hashLines(lines []string, seed maphash.Seed) []uint64 {
 	result := make([]uint64, len(lines))
 	var h maphash.Hash
@@ -675,6 +680,7 @@ func hashLines(lines []string, seed maphash.Seed) []uint64 {
 	return result
 }
 
+// longestOverlapKMP returns the longest prefix of next matching a suffix of prev.
 func longestOverlapKMP(prevHashes, nextHashes []uint64) int {
 	if len(prevHashes) == 0 || len(nextHashes) == 0 {
 		return 0
@@ -717,6 +723,7 @@ func prefixFunction(values []uint64) []int {
 	return prefix
 }
 
+// lineEqual uses hashes to avoid most string comparisons.
 func lineEqual(prevLine, nextLine string, prevHash, nextHash uint64) bool {
 	if prevHash != nextHash {
 		return false
