@@ -33,6 +33,9 @@ gt
 state.json
 .runtime/
 
+# Logs
+/logs/
+
 # Beads runtime state (not tracked)
 # Formulas ARE tracked for `go install @latest` - see bottom of file
 .beads/redirect
