@@ -538,6 +538,22 @@ Example: `[GAS TOWN] gastown/crew/gus <- human • 2025-12-30T15:42 • restart`
 Never use raw `tmux send-keys` - it doesn't handle Claude's input correctly.
 `gt nudge` uses literal mode + debounce + separate Enter for reliable delivery.
 
+### Mayor Logs
+
+Mayor log archives are written under `~/gt/logs/mayor/`:
+
+- `archive.log` - committed transcript (append-only)
+- `archive.live` - mutable tail (latest screen window)
+- `archive.journal.jsonl` - patch journal (append/replace events)
+The archiver starts automatically with the Mayor session.
+
+Configuration (environment variables):
+
+- `GT_MAYOR_LOG_ENABLED` (default: true)
+- `GT_MAYOR_LOG_INTERVAL_MS` (default: 242)
+- `GT_MAYOR_LOG_LINES` (default: 200)
+- `GT_MAYOR_LOG_ANSI` (default: true)
+
 ### Emergency
 
 ```bash
